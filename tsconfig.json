@@ -1,0 +1,67 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "baseUrl": "../../Code/aaaaaaaaa",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@dev/*": [
+        "./src/dev/*"
+      ],
+      "@apps/*": [
+        "./src/dev/apps/*"
+      ],
+      "@comps/*": [
+        "./src/dev/components/*"
+      ],
+      "@assets/*": [
+        "./src/dev/assets/*"
+      ],
+      "@utils/*": [
+        "./src/dev/utils/*"
+      ],
+      "@api/*": [
+        "./src/dev/api/*"
+      ],
+      "@styles/*": [
+        "./src/dev/styles/*"
+      ],
+      "@pubHTML/*": [
+        "./src/dev/pubComponents/PureHTML/*"
+      ],
+      "@pubSVG/*": [
+        "./src/dev/pubComponents/SVG/*"
+      ],
+      "@pubUtils/*": [
+        "./src/dev/pubComponents/PubUtils/*"
+      ],
+      "@svgDocument/*": [
+        "./src/books/SvgDocument/*"
+      ],
+      "@shadcn/*": [
+        "./src/dev/shadcn/*"
+      ],
+      "@books/*": [
+        "./src/books/*"
+      ],
+      "@music12doc/*": [
+        "./src/books/Music12Document/*"
+      ],
+      "@tonicml/*": [
+        "./src/dev/tonicml/*"
+      ],
+      "@mdx/*": [
+        "./src/dev/components/mdx/*"
+      ]
+    }
+  }
+}
