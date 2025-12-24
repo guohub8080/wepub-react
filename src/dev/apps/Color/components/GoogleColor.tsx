@@ -242,14 +242,14 @@ type FormatType = 'hex' | 'hashHex' | 'rgb' | 'hsl' | 'oklch';
 export const GoogleColor: React.FC<GoogleColorProps> = ({ onColorChange }) => {
   const [format, setFormat] = React.useState<FormatType>('hashHex');
 
-  const copyToClipboard = async (color: string) => {
+  const copyToClipboard = async (color: string, hex: string) => {
     try {
       await navigator.clipboard.writeText(color);
       toast.success(`已复制 ${color}`);
 
       // 如果是HEX格式，同时更新主颜色选择器
-      if ((format === 'hex' || format === 'hashHex') && formattedColor.startsWith('#')) {
-        const hexWithoutHash = formattedColor.replace('#', '');
+      if ((format === 'hex' || format === 'hashHex') && hex.startsWith('#')) {
+        const hexWithoutHash = hex.replace('#', '');
         onColorChange(hexWithoutHash + 'ff'); // 添加不透明度
       }
     } catch (error) {
@@ -358,7 +358,7 @@ export const GoogleColor: React.FC<GoogleColorProps> = ({ onColorChange }) => {
                     <div
                       className="aspect-square w-full max-w-16 mx-auto rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md"
                       style={{ backgroundColor: hex }}
-                      onClick={() => copyToClipboard(formattedColor)}
+                      onClick={() => copyToClipboard(formattedColor, hex)}
                       title={`${colorName} ${shade}: ${formattedColor}`}
                     />
                     {/* 色阶标签 */}

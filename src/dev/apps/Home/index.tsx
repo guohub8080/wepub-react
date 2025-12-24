@@ -41,20 +41,7 @@ export default function Home() {
           <KanbanProvider columns={columns} data={cards} onDataChange={setCards}>
             {(column) => (
               <KanbanBoard id={column.id} key={column.id}>
-                <KanbanHeader className="mb-1">
-                  <div className="relative inline-block">
-                    <span className="relative z-10 text-lg font-semibold text-foreground">
-                      {column.name}
-                    </span>
-                    <div
-                      className="absolute bottom-0.5 -left-4 -right-4 h-3 rounded-sm -z-10"
-                      style={{
-                        backgroundColor: column.color,
-                        opacity: 0.25
-                      }}
-                    />
-                  </div>
-                </KanbanHeader>
+                {/* 隐藏分组标题 */}
                 <KanbanCards id={column.id}>
                   {(card: CardData) => (
                     <KanbanCard
