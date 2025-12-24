@@ -9,7 +9,7 @@ import useGlobalSettings from "@dev/store/useGlobalSettings"
 import { Popover, PopoverContent, PopoverTrigger } from "@shadcn/components/ui/popover.tsx"
 import NavigationPanel from "./NavigationPanel.tsx"
 import { cn } from "@shadcn/lib/utils.ts"
-import { initialCards } from "@apps/Home/cardsConfig.tsx"
+import { allCards } from "@apps/Home/cardsConfig.tsx"
 
 export default function Navigation() {
   const navigate = useNavigate()
@@ -84,7 +84,7 @@ export default function Navigation() {
     const currentPath = location.pathname.replace(/^#/, '').replace(/\/$/, '') || '/'
     
     // 查找匹配的卡片
-    const matchedCard = initialCards.find(card => {
+    const matchedCard = allCards.find(card => {
       // 处理卡片 href
       let cardPath = card.href
       // 移除开头的 # 和 /
@@ -353,12 +353,14 @@ export default function Navigation() {
               )}
               <Popover open={isNavigationPanelOpen} onOpenChange={setIsNavigationPanelOpen}>
                 <PopoverTrigger asChild>
-                  <button
+                  <div
+                    role="button"
+                    tabIndex={0}
                     className={cn(
                       "text-sm font-medium text-foreground hover:text-foreground transition-all duration-200",
                       "px-4 py-2 rounded-full hover:bg-accent",
                       "cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                      "relative z-[50] flex items-center gap-2",
+                      "relative z-[50] flex items-center justify-center gap-2",
                       // 面板打开时保持更明显的样式
                       isNavigationPanelOpen && "bg-accent text-foreground",
                       // 使用内阴影来模拟边框，不影响布局计算
@@ -370,31 +372,34 @@ export default function Navigation() {
                       // 移动端点击切换（通过 CSS 媒体查询控制）
                       setIsNavigationPanelOpen(!isNavigationPanelOpen)
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setIsNavigationPanelOpen(!isNavigationPanelOpen)
+                      }
+                    }}
                   >
-                    {/* 所有屏幕尺寸都显示icon+文字 */}
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const matchedCard = initialCards.find(card => {
-                          let cardPath = card.href.replace(/^#?\/?/, '/');
-                          if (!cardPath.startsWith('/')) {
-                            cardPath = '/' + cardPath;
-                          }
-                          cardPath = cardPath.replace(/\/$/, '') || '/';
-                          const currentPath = location.pathname.replace(/^#/, '').replace(/\/$/, '') || '/';
-                          return cardPath === currentPath || currentPath.startsWith(cardPath + '/');
-                        });
-                        if (matchedCard?.icon) {
-                          return (
-                            <div className="w-4 h-4 flex items-center justify-center" style={{ color: matchedCard.color }}>
-                              {matchedCard.icon}
-                            </div>
-                          );
+                    {(() => {
+                      const matchedCard = allCards.find(card => {
+                        let cardPath = card.href.replace(/^#?\/?/, '/');
+                        if (!cardPath.startsWith('/')) {
+                          cardPath = '/' + cardPath;
                         }
-                        return null;
-                      })()}
-                      {pageTitle}
-                    </div>
-                  </button>
+                        cardPath = cardPath.replace(/\/$/, '') || '/';
+                        const currentPath = location.pathname.replace(/^#/, '').replace(/\/$/, '') || '/';
+                        return cardPath === currentPath || currentPath.startsWith(cardPath + '/');
+                      });
+                      if (matchedCard?.icon) {
+                        return (
+                          <div className="w-4 h-4 flex items-center justify-center" style={{ color: matchedCard.color }}>
+                            {matchedCard.icon}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                    <div className="h-5 flex items-center justify-center">{pageTitle}</div>
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent
                   className={cn(

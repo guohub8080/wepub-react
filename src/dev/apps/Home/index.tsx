@@ -35,29 +35,26 @@ export default function Home() {
     <>
       <div className="container mx-auto max-w-6xl relative z-10 pb-20 px-4">
         <Hero />
-        
-        {/* Kanban 风格的横向卡片布局 - 完全按照模板 */}
+
+        {/* Kanban 风格的横向卡片布局 */}
         <div className="mt-4">
           <KanbanProvider columns={columns} data={cards} onDataChange={setCards}>
             {(column) => (
-              <KanbanBoard id={column.id} key={column.id} className={column.id === 'about' ? 'pt-0' : ''}>
-                {/* 只有非"关于"分区才显示标题 */}
-                {column.id !== 'about' && (
-                  <KanbanHeader className="mb-1">
-                    <div className="relative inline-block">
-                      <span className="relative z-10 text-lg font-semibold text-foreground">
-                        {column.name}
-                      </span>
-                      <div 
-                        className="absolute bottom-0.5 -left-4 -right-4 h-3 rounded-sm -z-10"
-                        style={{ 
-                          backgroundColor: column.color,
-                          opacity: 0.25
-                        }}
-                      />
-                    </div>
-                  </KanbanHeader>
-                )}
+              <KanbanBoard id={column.id} key={column.id}>
+                <KanbanHeader className="mb-1">
+                  <div className="relative inline-block">
+                    <span className="relative z-10 text-lg font-semibold text-foreground">
+                      {column.name}
+                    </span>
+                    <div
+                      className="absolute bottom-0.5 -left-4 -right-4 h-3 rounded-sm -z-10"
+                      style={{
+                        backgroundColor: column.color,
+                        opacity: 0.25
+                      }}
+                    />
+                  </div>
+                </KanbanHeader>
                 <KanbanCards id={column.id}>
                   {(card: CardData) => (
                     <KanbanCard
@@ -65,7 +62,6 @@ export default function Home() {
                       id={card.id}
                       key={card.id}
                       name={card.title}
-                      className={column.id === 'about' ? 'h-[80px]' : ''}
                     >
                       <div
                         onClick={() => handleCardClick(card.href)}

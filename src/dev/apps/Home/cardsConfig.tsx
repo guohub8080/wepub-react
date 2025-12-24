@@ -6,6 +6,7 @@ import React from "react"
 import { IoLogoGithub } from "react-icons/io5"
 import { svgDocumentConfig } from "@svgDocument/data/info.tsx"
 import routerPaths from "@dev/router/paths.ts"
+import googleColors from "@assets/colors/googleColors.ts";
 
 // 定义卡片数据结构
 export interface CardData {
@@ -20,16 +21,15 @@ export interface CardData {
 
 // 定义列（分组）
 export const columns = [
-  { id: 'about', name: '关于', color: '#3b82f6' },
-  { id: 'frontend', name: '核心工具', color: '#ef4444' },
+  { id: 'frontend', name: '核心工具', color: googleColors.amber800 },
+  { id: 'docs', name: '前端文档', color: googleColors.green600 },
 ];
 
-// 定义所有卡片数据
-export const initialCards: CardData[] = [
-  // 关于分组
+// 系统页面配置 - 用于Navigation组件显示标题和图标（不在首页显示）
+export const systemPages: CardData[] = [
   {
     id: 'settings',
-    column: 'about',
+    column: 'system',
     title: '设置',
     description: '个性化设置和偏好配置',
     icon: (
@@ -41,23 +41,14 @@ export const initialCards: CardData[] = [
     href: routerPaths.settings,
     color: '#607D8B'
   },
-  {
-    id: 'github',
-    column: 'about',
-    title: 'GitHub',
-    description: '查看项目源码和贡献',
-    icon: (
-      <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center">
-        <IoLogoGithub className="w-9 h-9 text-black" />
-      </div>
-    ),
-    href: routerPaths.github,
-    color: '#1f2937'
-  },
-  // 前端分组
+];
+
+// 定义所有卡片数据（仅首页显示）
+export const initialCards: CardData[] = [
+  // 前端文档分组
   {
     id: 'svg-docs',
-    column: 'frontend',
+    column: 'docs',
     title: svgDocumentConfig.title,
     description: '动画效果、组件使用',
     icon: (
@@ -156,8 +147,8 @@ export const initialCards: CardData[] = [
   {
     id: 'svg-react-converter',
     column: 'frontend',
-    title: 'SVG/React组件互转',
-    description: 'SVG代码与React组件相互转换',
+    title: '组件转换',
+    description: '将原生svg转为React函数组件',
     icon: (
       <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" className="w-9 h-9">
         <path d="M132.581053 0c-12.934737 0-26.731789 5.12-36.217264 15.36C86.878316 25.6 80.842105 38.4 80.842105 51.2v921.6c0 12.8 5.173895 26.448842 15.521684 35.84C106.711579 1018.88 119.646316 1024 132.581053 1024h758.837894c12.934737 0 26.731789-5.12 36.217264-15.36C937.984 998.4 943.157895 985.6 943.157895 972.8V290.128842L649.970526 0H132.581053z" fill="#3078DB" />
@@ -170,3 +161,6 @@ export const initialCards: CardData[] = [
     color: '#3078DB'
   },
 ];
+
+// 所有卡片配置（首页显示 + 系统页面）- 用于Navigation组件
+export const allCards = [...initialCards, ...systemPages];
