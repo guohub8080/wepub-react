@@ -229,6 +229,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* 网格背景样式 */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -24,6 +24,13 @@ interface ErrorDisplayProps {
     source?: string;
     line?: number;
     column?: number;
+    consoleErrors?: Array<{
+      message: string;
+      url: string;
+      line: number;
+      column: number;
+      timestamp: number;
+    }>;
   };
   errorTitle?: string;
 }
@@ -148,6 +155,46 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ error, errorTitle })
                 <pre className="max-h-96 overflow-auto bg-muted p-4 text-xs leading-relaxed rounded-md mt-0 -mb-3">
                   {error.stack}
                 </pre>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Console错误 */}
+          {error.consoleErrors && error.consoleErrors.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Console.error信息
+                  <span className="text-xs text-muted-foreground">
+                    ({error.consoleErrors.length}条)
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 pb-4">
+                <div className="space-y-2">
+                  {error.consoleErrors.map((consoleError, index) => (
+                    <div key={index} className="border border-border rounded-md p-3 bg-muted/50">
+                      <div className="space-y-1 text-xs font-mono text-muted-foreground whitespace-pre-wrap">
+                        <div>
+                          {consoleError.message}
+                        </div>
+                        {consoleError.line > 0 ? (
+                          <div className="text-primary">
+                            {consoleError.url}:{consoleError.line}:{consoleError.column}
+                          </div>
+                        ) : (
+                          <div className="text-primary">
+                            {consoleError.url}
+                          </div>
+                        )}
+                        <div>
+                          {new Date(consoleError.timestamp).toLocaleTimeString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           )}

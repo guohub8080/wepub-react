@@ -5,6 +5,7 @@ import Settings from '../apps/Settings';
 import Home from '../apps/Home';
 import Color from '../apps/Color';
 import PubEditor from '../apps/PubEditor';
+import SvgReactConverter from '../apps/SvgReactConverter';
 import Articles from '../apps/PubEditor/pages/articles';
 import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -43,6 +44,10 @@ export default createHashRouter([
             {
                 path: "color",
                 element: <Color />
+            },
+            {
+                path: "svg-react",
+                element: <SvgReactConverter />
             },
             {
                 path: "pubeditor",

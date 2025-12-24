@@ -65,19 +65,20 @@ export default function Home() {
                       id={card.id}
                       key={card.id}
                       name={card.title}
+                      className={column.id === 'about' ? 'h-[80px]' : ''}
                     >
                       <div
                         onClick={() => handleCardClick(card.href)}
-                        className="block no-underline group cursor-pointer"
+                        className="block no-underline group cursor-pointer h-full"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 h-full">
                           <div
                             className="shrink-0 w-10 h-10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                             style={{ color: card.color }}
                           >
                             {card.icon}
                           </div>
-                          <div className="flex flex-col gap-1 flex-1">
+                          <div className="flex flex-col gap-1 flex-1 justify-center">
                             <p className="m-0 font-normal text-base">
                               {card.title}
                             </p>

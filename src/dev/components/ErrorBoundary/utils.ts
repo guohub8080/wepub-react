@@ -156,6 +156,13 @@ export const generateErrorReport = (error: {
   source?: string;
   line?: number;
   column?: number;
+  consoleErrors?: Array<{
+    message: string;
+    url: string;
+    line: number;
+    column: number;
+    timestamp: number;
+  }>;
 }): string => {
   return `
 🚨 React 错误报告
@@ -179,6 +186,15 @@ ${error.stack || 'N/A'}
 🧩 组件堆栈
 -----------
 ${formatComponentStack(error.componentStack || 'N/A')}
+
+📝 Console.error信息
+-----------
+${error.consoleErrors && error.consoleErrors.length > 0
+  ? error.consoleErrors.map((ce, index) =>
+      `${index + 1}. ${ce.message}\n   ${ce.line > 0 ? `${ce.url}:${ce.line}:${ce.column}` : ce.url}\n   ${new Date(ce.timestamp).toLocaleTimeString()}`
+    ).join('\n\n')
+  : '无Console.error记录'
+}
 
 📊 环境信息
 -----------
