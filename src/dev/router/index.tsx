@@ -50,7 +50,7 @@ export default createHashRouter([
                 element: <SvgReactConverter />
             },
             {
-                path: "pubeditor",
+                path: "pub",
                 element: <PubEditor />,
                 children: [
                     {

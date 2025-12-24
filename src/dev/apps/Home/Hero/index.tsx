@@ -5,6 +5,7 @@ import { GradientText } from "@shadcn/components/text/GradientText"
 import faviconSvg from "@assets/svgs/logoSvg/favicon.svg"
 import googleColors from "@assets/colors/googleColors.ts"
 import { ArrowRight } from "lucide-react"
+import routerPaths from "@dev/router/paths.ts"
 
 export default function Hero() {
   const navigate = useNavigate()
@@ -177,7 +178,7 @@ export default function Hero() {
       {/* 副标题 - 主按钮 */}
       <div className="flex justify-center mb-0 mt-6">
         <button
-          onClick={() => navigate('/pubeditor')}
+          onClick={() => navigate(`/${routerPaths.pubeditor}/`)}
           className="group relative inline-flex items-center gap-3 px-8 py-3.5 text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-100 hero-button-shimmer"
           style={{
             backgroundColor: googleColors.blue800,

@@ -13,7 +13,7 @@ const routerPaths = {
   svgDocument: "svg-document",
 
   // 前端相关
-  pubeditor: "pubeditor",
+  pubeditor: "pub",
   color: "color",
 
   // 外部链接
