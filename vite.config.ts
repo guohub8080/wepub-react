@@ -5,9 +5,14 @@ import tailwindcss from '@tailwindcss/vite'
 import terser from '@rollup/plugin-terser'
 import mdx from '@mdx-js/rollup'
 import remarkGfm from 'remark-gfm'
+
 const isProduction = process.env.NODE_ENV === 'production';
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  // GitHub Pages 需要设置 base 为仓库名
+  base: isGitHubPages ? '/wepub-react/' : '/',
   plugins: [
     react(),
     tailwindcss(),
