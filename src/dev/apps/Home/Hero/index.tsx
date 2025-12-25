@@ -196,7 +196,7 @@ export default function Hero() {
           <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
 
           {/* 文字 */}
-          <span className="relative z-10">进入编辑器</span>
+          <span className="relative z-10">进入文章浏览</span>
         </button>
       </div>
     </div>

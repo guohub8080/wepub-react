@@ -237,6 +237,16 @@
   background-size: 50px 50px;
 }
 
+/* 边框虚线流动动画 */
+@keyframes border-dash-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -4000;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

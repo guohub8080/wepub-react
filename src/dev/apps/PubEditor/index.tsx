@@ -1,31 +1,181 @@
-/** @jsxImportSource react */
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from './components/Sidebar.tsx';
-import ActionPanel from './components/ActionPanel.tsx';
+import React, { useState, useEffect } from 'react';
+import SideList from './components/SideList';
+import PreviewArea from './components/PreviewArea';
+import ActionPanel from './components/ActionPanel';
+import { Sheet, SheetContent } from '@shadcn/components/ui/sheet.tsx';
+import { usePubEditorStore, PUB_EDITOR_LAYOUT } from './store/usePubEditorStore';
+import useGlobalSettings from '@dev/store/useGlobalSettings';
 
 /**
  * PubEditor 主布局组件
- * 三列布局：左侧目录 + 中间内容（Outlet） + 右侧操作区域
- * 整体居中，最大宽度 1400px
+ * 三栏布局：左侧文章列表 + 中间预览区 + 右侧操作功能
+ *
+ * 布局说明：
+ * - 宽屏模式：三栏作为整体居中，左右侧边栏在预览区两侧，各有20px间距
+ * - 左栏 (SideList): 文章列表，sticky 定位，固定宽度 280px
+ * - 中栏 (PreviewArea): 文章预览，正常流，最大宽度 800px
+ * - 右栏 (ActionPanel): 操作功能，sticky 定位，固定宽度 320px
+ *
+ * 响应式逻辑：
+ * - Desktop (≥1280px): 三栏都显示，整体居中
+ * - Medium (1024px-1279px): 中栏+右栏显示，左侧通过抽屉打开
+ * - Tablet & Mobile (<1024px): 只显示中栏，左右侧边栏都通过抽屉打开
  */
 export default function PubEditor() {
+  // 获取导航栏高度
+  const { navigationHeight } = useGlobalSettings();
+
+  // 检测是否应该使用抽屉模式
+  // <1280px 左侧使用抽屉，<1024px 左右都使用抽屉
+  const [shouldUseLeftDrawer, setShouldUseLeftDrawer] = useState(false);
+  const [shouldUseRightDrawer, setShouldUseRightDrawer] = useState(false);
+
+  // 中栏容器引用，用于计算可用宽度
+  const mainContainerRef = React.useRef<HTMLDivElement>(null);
+
+  // PC 端和移动端状态管理
+  const {
+    showSideList,
+    showActionPanel,
+    setSideList,
+    setActionPanel,
+    mobileShowSideList,
+    mobileShowActionPanel,
+    setMobileSideList,
+    setMobileActionPanel,
+    setPreviewMaxAvailableWidth,
+    setPreviewWidth,
+    previewWidth
+  } = usePubEditorStore();
+
+  // 监听窗口大小变化并自动调整侧边栏显示 + 计算预览区最大可用宽度
+  useEffect(() => {
+    let lastBreakpoint: 'narrow' | 'medium' | 'wide' | null = null;
+
+    const handleResize = () => {
+      const width = window.innerWidth;
+
+      // 检测是否应该使用抽屉模式
+      setShouldUseLeftDrawer(width < 1280);
+      setShouldUseRightDrawer(width < 1024);
+
+      // 确定当前断点
+      let currentBreakpoint: 'narrow' | 'medium' | 'wide';
+      if (width >= 1280) {
+        currentBreakpoint = 'wide';
+      } else if (width >= 1024) {
+        currentBreakpoint = 'medium';
+      } else {
+        currentBreakpoint = 'narrow';
+      }
+
+      // 只在断点变化时自动调整侧边栏，避免覆盖用户的手动操作
+      if (lastBreakpoint !== currentBreakpoint) {
+        if (currentBreakpoint === 'wide') {
+          // 宽屏（≥1280px）：三栏都显示
+          setSideList(true);
+          setActionPanel(true);
+        } else if (currentBreakpoint === 'medium') {
+          // 中屏（1024px-1279px）：中栏+右栏，左侧抽屉
+          setSideList(false);
+          setActionPanel(true);
+        } else {
+          // 窄屏（<1024px）：只显示中栏，左右都抽屉
+          setSideList(false);
+          setActionPanel(false);
+        }
+        lastBreakpoint = currentBreakpoint;
+      }
+
+      // 计算中栏实际可用宽度
+      if (mainContainerRef.current) {
+        const containerWidth = mainContainerRef.current.offsetWidth;
+        // 不减去任何间距，确保内容与容器无缝贴合
+        const availableWidth = containerWidth;
+        // 取最小值：配置的最大宽度 vs 实际可用宽度
+        const maxAllowedWidth = Math.min(PUB_EDITOR_LAYOUT.PREVIEW_MAX_WIDTH, availableWidth);
+        setPreviewMaxAvailableWidth(maxAllowedWidth);
+
+        // 如果当前宽度超过新的最大宽度，自动调整
+        if (previewWidth > maxAllowedWidth) {
+          setPreviewWidth(maxAllowedWidth);
+        }
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    // 使用 ResizeObserver 监听容器大小变化
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+
+    if (mainContainerRef.current) {
+      resizeObserver.observe(mainContainerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
+    };
+  }, [setSideList, setActionPanel, setPreviewMaxAvailableWidth, setPreviewWidth, previewWidth]);
+
   return (
-    <div className="w-full min-h-screen flex justify-center">
-      {/* 外层容器：居中，最大宽度 1400px */}
-      <div className="w-full max-w-[1400px] flex">
-        {/* 左侧目录 - 固定宽度 */}
-        <Sidebar />
+    <div
+      className="w-full relative flex justify-center"
+      style={{ minHeight: `calc(100vh - ${navigationHeight}px)` }}
+    >
+      {/* 左侧抽屉 - 小于1280px时使用 */}
+      <Sheet open={mobileShowSideList} onOpenChange={setMobileSideList}>
+        <SheetContent side="left" className="p-0" style={{ width: `${PUB_EDITOR_LAYOUT.SIDE_LIST_WIDTH}px` }}>
+          <SideList />
+        </SheetContent>
+      </Sheet>
 
-        {/* 中间内容区域 - 自适应宽度，包含 Outlet */}
-        <div className="flex-1 min-w-0 bg-background">
-          <div className="p-6">
-            <Outlet />
-          </div>
-        </div>
+      {/* 右侧抽屉 - 小于1024px时使用 */}
+      <Sheet open={mobileShowActionPanel} onOpenChange={setMobileActionPanel}>
+        <SheetContent side="right" className="p-0" style={{ width: `${PUB_EDITOR_LAYOUT.ACTION_PANEL_WIDTH}px` }}>
+          <ActionPanel />
+        </SheetContent>
+      </Sheet>
 
-        {/* 右侧操作区域 - 固定宽度 */}
-        <ActionPanel />
+      {/* 三栏容器 - 宽屏时整体居中 */}
+      <div className="flex w-full max-w-[1440px] relative">
+        {/* 左栏：文章列表 - sticky 定位 */}
+        {showSideList && !shouldUseLeftDrawer && (
+          <aside
+            className="flex-shrink-0 border-r border-border overflow-y-auto sticky"
+            style={{
+              width: `${PUB_EDITOR_LAYOUT.SIDE_LIST_WIDTH}px`,
+              height: `calc(100vh - ${navigationHeight}px)`,
+              top: `${navigationHeight}px`,
+              marginRight: '20px'
+            }}
+          >
+            <SideList />
+          </aside>
+        )}
+
+        {/* 中栏：预览区 - 正常流 */}
+        <main ref={mainContainerRef} className="flex-1 min-w-0">
+          <PreviewArea />
+        </main>
+
+        {/* 右栏：操作功能 - sticky 定位 */}
+        {showActionPanel && !shouldUseRightDrawer && (
+          <aside
+            className="flex-shrink-0 overflow-y-auto sticky"
+            style={{
+              width: `${PUB_EDITOR_LAYOUT.ACTION_PANEL_WIDTH}px`,
+              height: `calc(100vh - ${navigationHeight}px)`,
+              top: `${navigationHeight}px`,
+              marginLeft: '20px'
+            }}
+          >
+            <ActionPanel />
+          </aside>
+        )}
       </div>
     </div>
   );

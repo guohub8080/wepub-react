@@ -29,7 +29,7 @@ export const systemPages: CardData[] = [
   {
     id: 'editor',
     column: 'system',
-    title: '编辑器',
+    title: '浏览文章',
     description: '可复制到公众号或其他平台',
     icon: (
       <svg

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useWindowScroll } from "@uidotdev/usehooks"
-import { BookText, BookOpen } from "lucide-react"
+import { BookText, BookOpen, PanelLeftOpen, PanelLeftClose, PanelRightOpen, PanelRightClose } from "lucide-react"
 import { isUndefined } from "lodash"
 import logoUrl from "@dev/assets/svgs/logoSvg/favicon.svg"
 import useGlobalSettings from "@dev/store/useGlobalSettings"
+import { usePubEditorStore, PUB_EDITOR_LAYOUT } from "@apps/PubEditor/store/usePubEditorStore"
 import { Popover, PopoverContent, PopoverTrigger } from "@shadcn/components/ui/popover.tsx"
 import NavigationPanel from "./NavigationPanel.tsx"
 import { cn } from "@shadcn/lib/utils.ts"
@@ -70,6 +71,27 @@ export default function Navigation() {
 
   // 判断是否是 home 页面
   const isHomePage = location.pathname === '/home' || location.pathname === '/home/' || location.pathname === '/'
+
+  // 判断是否是 pub 页面
+  const isPubPage = location.pathname.startsWith('/pub')
+
+  // Pub 编辑器状态
+  const { showSideList, showActionPanel, toggleSideList, toggleActionPanel, setMobileSideList, setMobileActionPanel } = usePubEditorStore()
+
+  // 检测是否应该使用抽屉模式
+  // <1280px 左侧使用抽屉，<1024px 右侧使用抽屉
+  const [shouldUseLeftDrawer, setShouldUseLeftDrawer] = useState(false)
+  const [shouldUseRightDrawer, setShouldUseRightDrawer] = useState(false)
+  useEffect(() => {
+    const checkDrawerMode = () => {
+      const width = window.innerWidth
+      setShouldUseLeftDrawer(width < 1280)
+      setShouldUseRightDrawer(width < 1024)
+    }
+    checkDrawerMode()
+    window.addEventListener('resize', checkDrawerMode)
+    return () => window.removeEventListener('resize', checkDrawerMode)
+  }, [])
   
   // 获取当前页面 title - 从 Home 卡片配置中匹配
   const [pageTitle, setPageTitle] = useState<string>('')
@@ -434,6 +456,55 @@ export default function Navigation() {
 
           {/* 右侧操作区 */}
           <div className="flex items-center gap-2 lg:gap-4">
+            {/* Pub 页面侧边栏控制按钮 */}
+            {isPubPage && (
+              <>
+                {/* 左侧文章列表切换 */}
+                <button
+                  onClick={() => {
+                    if (shouldUseLeftDrawer) {
+                      // 小于1280px：打开抽屉
+                      setMobileSideList(true)
+                    } else {
+                      // 宽屏：切换内联侧边栏
+                      toggleSideList()
+                    }
+                  }}
+                  className="size-6 flex items-center justify-center hover:opacity-80 hover:scale-110 transition-all duration-300"
+                  title={showSideList && !shouldUseLeftDrawer ? "隐藏文章列表" : "显示文章列表"}
+                >
+                  {showSideList && !shouldUseLeftDrawer ? (
+                    <PanelLeftClose className="size-5" />
+                  ) : (
+                    <PanelLeftOpen className="size-5" />
+                  )}
+                  <span className="sr-only">{showSideList && !shouldUseLeftDrawer ? "隐藏文章列表" : "显示文章列表"}</span>
+                </button>
+
+                {/* 右侧操作面板切换 */}
+                <button
+                  onClick={() => {
+                    if (shouldUseRightDrawer) {
+                      // 小于1024px：打开抽屉
+                      setMobileActionPanel(true)
+                    } else {
+                      // 中宽屏：切换内联侧边栏
+                      toggleActionPanel()
+                    }
+                  }}
+                  className="size-6 flex items-center justify-center hover:opacity-80 hover:scale-110 transition-all duration-300"
+                  title={showActionPanel && !shouldUseRightDrawer ? "隐藏操作面板" : "显示操作面板"}
+                >
+                  {showActionPanel && !shouldUseRightDrawer ? (
+                    <PanelRightClose className="size-5" />
+                  ) : (
+                    <PanelRightOpen className="size-5" />
+                  )}
+                  <span className="sr-only">{showActionPanel && !shouldUseRightDrawer ? "隐藏操作面板" : "显示操作面板"}</span>
+                </button>
+              </>
+            )}
+
             {/* 设置按钮 */}
             <a 
               href="/settings"
