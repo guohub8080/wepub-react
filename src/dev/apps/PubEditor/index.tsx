@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import SideList from './components/SideList';
 import PreviewArea from './components/PreviewArea';
 import ActionPanel from './components/ActionPanel';
-import { Sheet, SheetContent } from '@shadcn/components/ui/sheet.tsx';
+import { Sheet, SheetContent, SheetTitle } from '@shadcn/components/ui/sheet.tsx';
 import { usePubEditorStore, PUB_EDITOR_LAYOUT } from './store/usePubEditorStore';
 import useGlobalSettings from '@dev/store/useGlobalSettings';
+import { Card } from '@shadcn/components/ui/card.tsx';
 
 /**
  * PubEditor 主布局组件
@@ -45,7 +46,8 @@ export default function PubEditor() {
     setMobileActionPanel,
     setPreviewMaxAvailableWidth,
     setPreviewWidth,
-    previewWidth
+    previewWidth,
+    previewMaxWidth
   } = usePubEditorStore();
 
   // 监听窗口大小变化并自动调整侧边栏显示 + 计算预览区最大可用宽度
@@ -121,6 +123,11 @@ export default function PubEditor() {
     };
   }, [setSideList, setActionPanel, setPreviewMaxAvailableWidth, setPreviewWidth, previewWidth]);
 
+  // 计算实际显示的栏数和布局方式
+  const showLeftColumn = showSideList && !shouldUseLeftDrawer;
+  const showRightColumn = showActionPanel && !shouldUseRightDrawer;
+  const visibleColumns = [showLeftColumn, true, showRightColumn].filter(Boolean).length;
+
   return (
     <div
       className="w-full relative flex justify-center"
@@ -135,22 +142,31 @@ export default function PubEditor() {
 
       {/* 右侧抽屉 - 小于1024px时使用 */}
       <Sheet open={mobileShowActionPanel} onOpenChange={setMobileActionPanel}>
-        <SheetContent side="right" className="p-0" style={{ width: `${PUB_EDITOR_LAYOUT.ACTION_PANEL_WIDTH}px` }}>
+        <SheetContent side="right" className="p-0" hideClose={true} style={{ width: `${PUB_EDITOR_LAYOUT.ACTION_PANEL_WIDTH}px` }}>
+          <SheetTitle className="sr-only">预览选项</SheetTitle>
           <ActionPanel />
         </SheetContent>
       </Sheet>
 
-      {/* 三栏容器 - 宽屏时整体居中 */}
-      <div className="flex w-full max-w-[1440px] relative">
+      {/* 三栏容器 - 根据显示栏数动态居中 */}
+      <div
+        className="flex w-full relative"
+        style={{
+          maxWidth: visibleColumns === 3 ? '1440px' :
+            visibleColumns === 2 ? '1200px' :
+              '800px',
+          justifyContent: 'center',
+          gap: '20px',
+        }}
+      >
         {/* 左栏：文章列表 - sticky 定位 */}
-        {showSideList && !shouldUseLeftDrawer && (
+        {showLeftColumn && (
           <aside
-            className="flex-shrink-0 border-r border-border overflow-y-auto sticky"
+            className="flex-shrink-0 pt-2 pb-2 sticky"
             style={{
               width: `${PUB_EDITOR_LAYOUT.SIDE_LIST_WIDTH}px`,
               height: `calc(100vh - ${navigationHeight}px)`,
               top: `${navigationHeight}px`,
-              marginRight: '20px'
             }}
           >
             <SideList />
@@ -158,22 +174,30 @@ export default function PubEditor() {
         )}
 
         {/* 中栏：预览区 - 正常流 */}
-        <main ref={mainContainerRef} className="flex-1 min-w-0">
+        <main
+          ref={mainContainerRef}
+          className="flex-1"
+          style={{
+            maxWidth: `${previewMaxWidth}px`,
+            minWidth: 0,
+          }}
+        >
           <PreviewArea />
         </main>
 
         {/* 右栏：操作功能 - sticky 定位 */}
-        {showActionPanel && !shouldUseRightDrawer && (
+        {showRightColumn && (
           <aside
-            className="flex-shrink-0 overflow-y-auto sticky"
+            className="flex-shrink-0 sticky pt-2 pr-5 overflow-y-auto"
             style={{
               width: `${PUB_EDITOR_LAYOUT.ACTION_PANEL_WIDTH}px`,
               height: `calc(100vh - ${navigationHeight}px)`,
               top: `${navigationHeight}px`,
-              marginLeft: '20px'
             }}
           >
-            <ActionPanel />
+            <Card className="bg-card rounded-lg pt-0">
+              <ActionPanel />
+            </Card>
           </aside>
         )}
       </div>

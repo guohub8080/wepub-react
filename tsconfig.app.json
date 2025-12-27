@@ -10,7 +10,7 @@
     "allowJs": true,
     "module": "ESNext",
     "skipLibCheck": true,
-    "baseUrl": "../../Code/aaaaaaaaa",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
@@ -53,6 +53,9 @@
       ],
       "@books/*": [
         "./src/books/*"
+      ],
+      "@articles/*": [
+        "./src/articles/*"
       ],
       "@music12doc/*": [
         "./src/books/Music12Document/*"

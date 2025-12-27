@@ -43,6 +43,7 @@ export default defineConfig({
       "@svgDocument": path.resolve(__dirname, "./src/books/SvgDocument"),
       "@shadcn": path.resolve(__dirname, "./src/dev/shadcn"),
       "@books": path.resolve(__dirname, "./src/books"),
+      "@articles": path.resolve(__dirname, "./src/articles"),
       "@mdx": path.resolve(__dirname, "./src/dev/components/mdx"),
       path: "path-browserify",
     },

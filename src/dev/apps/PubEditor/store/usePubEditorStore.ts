@@ -7,7 +7,7 @@ import { persist } from 'zustand/middleware';
 export const PUB_EDITOR_LAYOUT = {
   SIDE_LIST_WIDTH: 280,      // 左侧文章列表宽度
   ACTION_PANEL_WIDTH: 320,   // 右侧操作面板宽度
-  PREVIEW_MAX_WIDTH: 800,    // 预览区最大宽度
+  PREVIEW_MAX_WIDTH: 650,    // 预览区最大宽度
   PREVIEW_MIN_WIDTH: 150,    // 预览区最小宽度
   PREVIEW_DEFAULT_PADDING: 20, // 预览区默认内边距
 } as const;
@@ -30,6 +30,8 @@ interface PubEditorState {
   previewWidth: number;
   // 预览区域最大可用宽度（根据容器动态计算）
   previewMaxAvailableWidth: number;
+  // 预览区域最大宽度
+  previewMaxWidth: number;
   // 预览区域内边距
   previewPadding: number;
   // 是否显示预览区边框
@@ -57,6 +59,8 @@ interface PubEditorState {
   setPreviewWidth: (width: number) => void;
   // 设置预览区域最大可用宽度
   setPreviewMaxAvailableWidth: (width: number) => void;
+  // 设置预览区域最大宽度
+  setPreviewMaxWidth: (width: number) => void;
   // 设置预览区域内边距
   setPreviewPadding: (padding: number) => void;
   // 切换预览区边框显示
@@ -79,6 +83,7 @@ export const usePubEditorStore = create<PubEditorState>()(
       mobileShowActionPanel: false,
       previewWidth: PUB_EDITOR_LAYOUT.PREVIEW_MAX_WIDTH,
       previewMaxAvailableWidth: PUB_EDITOR_LAYOUT.PREVIEW_MAX_WIDTH,
+      previewMaxWidth: PUB_EDITOR_LAYOUT.PREVIEW_MAX_WIDTH,
       previewPadding: PUB_EDITOR_LAYOUT.PREVIEW_DEFAULT_PADDING,
       showPreviewBorder: false,
       previewBorderColor: 'rgb(120, 120, 120)',
@@ -97,6 +102,7 @@ export const usePubEditorStore = create<PubEditorState>()(
       setMobileActionPanel: (show: boolean) => set({ mobileShowActionPanel: show }),
       setPreviewWidth: (width: number) => set({ previewWidth: width }),
       setPreviewMaxAvailableWidth: (width: number) => set({ previewMaxAvailableWidth: width }),
+      setPreviewMaxWidth: (width: number) => set({ previewMaxWidth: width }),
       setPreviewPadding: (padding: number) => set({ previewPadding: padding }),
       setPreviewBorderColor: (color: string) => set({ previewBorderColor: color }),
       setPreviewBackgroundColor: (color: string) => set({ previewBackgroundColor: color }),
@@ -109,6 +115,7 @@ export const usePubEditorStore = create<PubEditorState>()(
         showSideList: state.showSideList,
         showActionPanel: state.showActionPanel,
         previewWidth: state.previewWidth,
+        previewMaxWidth: state.previewMaxWidth,
         previewPadding: state.previewPadding,
         showPreviewBorder: state.showPreviewBorder,
         previewBorderColor: state.previewBorderColor,

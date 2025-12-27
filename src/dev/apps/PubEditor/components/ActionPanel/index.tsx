@@ -1,17 +1,22 @@
 /** @jsxImportSource react */
-import React from 'react';
-import { Copy, FileCode } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Copy, FileCode, Check, X } from 'lucide-react';
 import { Button } from '@shadcn/components/ui/button.tsx';
-import { Card, CardContent } from '@shadcn/components/ui/card.tsx';
+import { Card } from '@shadcn/components/ui/card.tsx';
 import { Slider } from '@shadcn/components/ui/slider.tsx';
 import { Label } from '@shadcn/components/ui/label.tsx';
 import { Switch } from '@shadcn/components/ui/switch.tsx';
 import { Input } from '@shadcn/components/ui/input.tsx';
+import { Badge } from '@shadcn/components/ui/badge.tsx';
+import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/components/ui/popover.tsx';
+import { HexColorPicker } from 'react-colorful';
 import toast from 'react-hot-toast';
 import { usePubEditorStore, PUB_EDITOR_LAYOUT } from '@apps/PubEditor/store/usePubEditorStore';
+import faviconSvg from '@dev/assets/svgs/logoSvg/favicon.svg';
 
 /**
  * 右栏：操作功能组件
+ * 专业的 UI/UX 设计，遵循现代设计原则
  */
 
 // RGB 转 Hex 辅助函数
@@ -25,25 +30,76 @@ const rgbToHex = (rgb: string): string => {
   }).join('');
 };
 
+// 预设画布颜色
+const CANVAS_PRESET_COLORS = [
+  { value: 'transparent', label: '透明', display: '#ffffff' },
+  { value: '#ffffff', label: '白色', display: '#ffffff' },
+  { value: '#f8fafc', label: '浅灰', display: '#f8fafc' },
+  { value: '#e2e8f0', label: '灰色', display: '#e2e8f0' },
+  { value: '#1e293b', label: '深灰', display: '#1e293b' },
+  { value: '#000000', label: '黑色', display: '#000000' },
+  { value: '#ef4444', label: '红色', display: '#ef4444' },
+  { value: '#22c55e', label: '绿色', display: '#22c55e' },
+  { value: '#3b82f6', label: '蓝色', display: '#3b82f6' },
+  { value: '#f59e0b', label: '橙色', display: '#f59e0b' },
+  { value: '#a855f7', label: '紫色', display: '#a855f7' },
+] as const;
+
+// 预设边框颜色
+const BORDER_PRESET_COLORS = [
+  { value: 'transparent', label: '透明', display: '#ffffff' },
+  { value: '#e2e8f0', label: '浅灰', display: '#e2e8f0' },
+  { value: '#64748b', label: '灰色', display: '#64748b' },
+  { value: '#3b82f6', label: '蓝色', display: '#3b82f6' },
+  { value: '#ef4444', label: '红色', display: '#ef4444' },
+] as const;
+
 export default function ActionPanel() {
-  const { previewWidth, setPreviewWidth, previewMaxAvailableWidth, previewPadding, setPreviewPadding, showPreviewBorder, toggleShowPreviewBorder, previewBorderColor, setPreviewBorderColor, previewBackgroundColor, setPreviewBackgroundColor, previewContentRef } = usePubEditorStore();
+  const {
+    previewWidth,
+    setPreviewWidth,
+    previewMaxAvailableWidth,
+    previewPadding,
+    setPreviewPadding,
+    showPreviewBorder,
+    toggleShowPreviewBorder,
+    previewBorderColor,
+    setPreviewBorderColor,
+    previewBackgroundColor,
+    setPreviewBackgroundColor,
+    previewContentRef,
+    setMobileActionPanel,
+    mobileShowActionPanel
+  } = usePubEditorStore();
+
+  // 判断是否在移动端抽屉中（< 1024px 且抽屉打开）
+  const [isMobileDrawer, setIsMobileDrawer] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileDrawer(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // 复制成功状态
+  const [copyRichTextSuccess, setCopyRichTextSuccess] = useState(false);
+  const [copyHTMLSuccess, setCopyHTMLSuccess] = useState(false);
 
   // 复制富文本到剪贴板
   const handleCopyRichText = async () => {
     try {
-      // 从 store 中获取预览内容 DOM
       const contentDiv = previewContentRef.current;
       if (!contentDiv) {
-        toast.error('未找到内容');
         return;
       }
 
-      // 创建一个包含格式的 HTML blob
       const htmlContent = contentDiv.innerHTML;
       const blob = new Blob([htmlContent], { type: 'text/html' });
       const plainText = contentDiv.textContent || '';
 
-      // 使用 Clipboard API 复制富文本
       await navigator.clipboard.write([
         new ClipboardItem({
           'text/html': blob,
@@ -51,162 +107,396 @@ export default function ActionPanel() {
         })
       ]);
 
-      toast.success('富文本已复制到剪贴板');
+      setCopyRichTextSuccess(true);
+      setTimeout(() => setCopyRichTextSuccess(false), 1000);
     } catch (error) {
       console.error('复制失败:', error);
-      toast.error('复制失败，请重试');
     }
   };
 
   // 复制HTML文字到剪贴板
   const handleCopyHTML = async () => {
     try {
-      // 从 store 中获取预览内容 DOM
       const contentDiv = previewContentRef.current;
       if (!contentDiv) {
-        toast.error('未找到内容');
         return;
       }
 
-      // 复制HTML源代码，并压缩（去除多余空格和换行）
       const htmlContent = contentDiv.innerHTML
-        .replace(/\s+/g, ' ')  // 多个空白字符替换为单个空格
-        .replace(/>\s+</g, '><')  // 去除标签之间的空白
-        .replace(/\s+\/>/g, '/>')  // 去除自闭合标签前的空白
+        .replace(/\s+/g, ' ')
+        .replace(/>\s+</g, '><')
+        .replace(/\s+\/>/g, '/>')
         .trim();
 
       await navigator.clipboard.writeText(htmlContent);
 
-      toast.success('HTML代码已复制到剪贴板');
+      setCopyHTMLSuccess(true);
+      setTimeout(() => setCopyHTMLSuccess(false), 1000);
     } catch (error) {
       console.error('复制失败:', error);
-      toast.error('复制失败，请重试');
     }
   };
 
-  return (
-    <div className="h-full flex flex-col p-4">
-      <div className="flex-1 overflow-y-auto min-h-0">
-        <div className="space-y-4">
-          {/* 预览区宽度控制 */}
-          <Card>
-            <CardContent className="pt-6 space-y-4">
-              <div className="space-y-2">
+  return (<>
+    {/* // 最外层的p-0不允许做任何修改 */}
+    {/* <div className="h-full flex flex-col pt-0 pr-1 overflow-y-auto"> */}
+      {/* 整个 ActionPanel 作为一张完整的卡片， pt-0不允许修改 */}
+      {/* <Card className="bg-card pt-0 rounded-lg"> */}
+        {/* 专业的 Header 设计 */}
+        <div className={`relative overflow-hidden border-b bg-slate-300 ${isMobileDrawer ? 'rounded-t-none' : 'rounded-t-lg'}`}>
+          {/* 高光扫过动画 */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%)',
+              animation: 'shine 4s ease-in-out infinite',
+              width: '150%',
+            }}
+          />
+          <style>{`
+            @keyframes shine {
+              0% {
+                transform: translateX(-100%);
+              }
+              100% {
+                transform: translateX(100%);
+              }
+            }
+          `}</style>
+
+          {/* Header 内容 */}
+          <div className="relative flex items-center justify-center py-4 lg:pr-0 pr-12">
+            <div className="relative">
+              {/* 图标光晕效果 */}
+              <div className="absolute inset-0 blur-lg bg-blue-500/20 rounded-full" />
+              {/* Favicon 图标 */}
+              <img
+                src={faviconSvg}
+                alt="WePub"
+                className="relative w-6 h-6 drop-shadow-[0_0_10px_rgba(59,130,246,0.4)]"
+              />
+            </div>
+            {/* 标题文字 */}
+            <h2 className="text-sm font-semibold text-foreground tracking-wide ml-2">预览选项</h2>
+          </div>
+
+          {/* 移动端关闭按钮 */}
+          <button
+            type="button"
+            onClick={() => setMobileActionPanel(false)}
+            className="lg:hidden absolute top-1/2 -translate-y-1/2 right-3 p-1.5 rounded-md hover:bg-foreground/10 transition-all duration-200"
+            aria-label="关闭"
+          >
+            <X className="w-5 h-5 text-foreground/70 hover:text-foreground" />
+          </button>
+        </div>
+
+        {/* 内容区域 */}
+        <div className="space-y-6">
+          {/* 预览设置区域 */}
+          <section className="space-y-4">
+            {/* 内容宽度控制  border-b px-6 pb-4 不允许修改*/}
+              <div className="space-y-3 border-b px-6 pb-4">
                 <div className="flex items-center justify-between">
-                  <Label>内容宽度</Label>
-                  <span className="text-sm text-muted-foreground font-mono">
-                    {previewWidth}px
-                  </span>
+                  <Label className="text-sm font-medium">内容宽度</Label>
+                  <Badge className="font-mono text-xs bg-primary text-primary-foreground">
+                    {previewWidth}
+                  </Badge>
                 </div>
                 <Slider
                   value={[previewWidth]}
-                  onValueChange={(value) => setPreviewWidth(value[0])}
+                  onValueChange={(value: number[]) => setPreviewWidth(value[0])}
                   min={PUB_EDITOR_LAYOUT.PREVIEW_MIN_WIDTH}
                   max={previewMaxAvailableWidth}
                   step={10}
                   className="w-full"
                 />
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{PUB_EDITOR_LAYOUT.PREVIEW_MIN_WIDTH}px</span>
-                  <span>{previewMaxAvailableWidth}px</span>
+                  <span>{PUB_EDITOR_LAYOUT.PREVIEW_MIN_WIDTH}</span>
+                  <span>{previewMaxAvailableWidth}</span>
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* 内边距控制 border-b px-6 pb-4 不允许修改 */}
+              <div className="space-y-3  border-b px-6 pb-4">
                 <div className="flex items-center justify-between">
-                  <Label>内边距</Label>
-                  <span className="text-sm text-muted-foreground font-mono">
-                    {previewPadding}px
-                  </span>
+                  <Label className="text-sm font-medium">内边距</Label>
+                  <Badge className="font-mono text-xs bg-primary text-primary-foreground">
+                    {previewPadding}
+                  </Badge>
                 </div>
                 <Slider
                   value={[previewPadding]}
-                  onValueChange={(value) => setPreviewPadding(value[0])}
+                  onValueChange={(value: number[]) => setPreviewPadding(value[0])}
                   min={0}
                   max={100}
                   step={5}
                   className="w-full"
                 />
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>0px</span>
-                  <span>100px</span>
+                  <span>0</span>
+                  <span>100</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <Label htmlFor="preview-border">显示边框</Label>
-                <Switch
-                  id="preview-border"
-                  checked={showPreviewBorder}
-                  onCheckedChange={toggleShowPreviewBorder}
-                />
-              </div>
+              {/* 画布颜色 */}
+              <div className="space-y-3 border-b px-6 pb-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">画布颜色</Label>
+                  <Badge className="font-mono text-xs bg-primary text-primary-foreground">
+                    {previewBackgroundColor.toUpperCase()}
+                  </Badge>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="border-color">边框颜色</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="border-color"
-                    type="color"
-                    value={previewBorderColor.startsWith('rgb') ? rgbToHex(previewBorderColor) : previewBorderColor}
-                    onChange={(e) => setPreviewBorderColor(e.target.value)}
-                    className="w-12 h-10 p-1 cursor-pointer"
-                  />
-                  <Input
-                    type="text"
-                    value={previewBorderColor}
-                    onChange={(e) => setPreviewBorderColor(e.target.value)}
-                    placeholder="rgb(120, 120, 120)"
-                    className="flex-1"
-                  />
+                {/* 预设颜色选项 */}
+                <div className="grid grid-cols-6 gap-2">
+                  {CANVAS_PRESET_COLORS.map((color) => (
+                    <button
+                      key={color.value}
+                      type="button"
+                      onClick={() => setPreviewBackgroundColor(color.value)}
+                      className={`relative aspect-square w-full rounded-md border-2 transition-all duration-200 hover:scale-105 cursor-pointer
+                        after:content-[''] after:absolute after:bottom-[-6px] after:left-1/2 after:-translate-x-1/2
+                        after:w-3/4 after:h-1 after:bg-primary after:rounded-full after:transition-opacity after:duration-200
+                        ${previewBackgroundColor === color.value ? 'after:opacity-100' : 'after:opacity-0'}`}
+                      style={{
+                        backgroundColor: color.display,
+                        borderColor: 'rgb(226, 232, 240)',
+                      }}
+                      title={color.label}
+                    >
+                      {/* 透明背景的棋盘格 */}
+                      {color.value === 'transparent' && (
+                        <div
+                          className="absolute inset-0 rounded-sm"
+                          style={{
+                            backgroundImage: `
+                              linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+                              linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+                              linear-gradient(-45deg, transparent 75%, #e5e7eb 75%)
+                            `,
+                            backgroundSize: '16px 16px',
+                            backgroundPosition: '0 0, 0 8px, 8px -8px, -8px 0px',
+                          }}
+                        />
+                      )}
+                    </button>
+                  ))}
+
+                  {/* 自定义颜色取色器 - 简洁设计 */}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className={`relative aspect-square w-full rounded-md border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer overflow-hidden
+                          after:content-[''] after:absolute after:bottom-[-6px] after:left-1/2 after:-translate-x-1/2
+                          after:w-3/4 after:h-1 after:bg-primary after:rounded-full after:transition-opacity after:duration-200
+                          ${!CANVAS_PRESET_COLORS.some(c => c.value === previewBackgroundColor) ? 'after:opacity-100 border-primary/60' : 'after:opacity-0 border-muted-foreground/40 hover:border-primary/60'}`}
+                        style={{
+                          backgroundColor: !CANVAS_PRESET_COLORS.some(c => c.value === previewBackgroundColor)
+                            ? previewBackgroundColor
+                            : 'transparent',
+                        }}
+                        title="自定义颜色"
+                      >
+                        {/* 如果未选自定义颜色，显示4色块网格 */}
+                        {CANVAS_PRESET_COLORS.some(c => c.value === previewBackgroundColor) && (
+                          <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 p-1.5 gap-1">
+                            <div className="rounded-sm" style={{ backgroundColor: '#ef4444' }} />
+                            <div className="rounded-sm" style={{ backgroundColor: '#22c55e' }} />
+                            <div className="rounded-sm" style={{ backgroundColor: '#3b82f6' }} />
+                            <div className="rounded-sm" style={{ backgroundColor: '#f59e0b' }} />
+                          </div>
+                        )}
+
+                        {/* 如果已选自定义颜色，显示加号图标 */}
+                        {!CANVAS_PRESET_COLORS.some(c => c.value === previewBackgroundColor) && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                          </div>
+                        )}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-6" align="center" sideOffset={10}>
+                      <div className="flex flex-col items-center space-y-3">
+                        {/* react-colorful 颜色选择器 - 居中 */}
+                        <HexColorPicker
+                          color={previewBackgroundColor === 'transparent' ? '#ffffff' : previewBackgroundColor}
+                          onChange={(color) => setPreviewBackgroundColor(color.toUpperCase())}
+                          style={{ width: '240px', height: '180px' }}
+                        />
+                        {/* 颜色值输入框 - 与选择器同宽对齐 */}
+                        <div className="flex items-center gap-2" style={{ width: '240px' }}>
+                          <div
+                            className="w-10 h-10 rounded border-2 border-border flex-shrink-0"
+                            style={{ backgroundColor: previewBackgroundColor }}
+                          />
+                          <Input
+                            type="text"
+                            value={previewBackgroundColor.toUpperCase()}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPreviewBackgroundColor(e.target.value.toUpperCase())}
+                            className="font-mono text-sm flex-1"
+                            placeholder="#FFFFFF"
+                          />
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="bg-color">背景颜色</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="bg-color"
-                    type="color"
-                    value={previewBackgroundColor}
-                    onChange={(e) => setPreviewBackgroundColor(e.target.value)}
-                    className="w-12 h-10 p-1 cursor-pointer"
-                  />
-                  <Input
-                    type="text"
-                    value={previewBackgroundColor}
-                    onChange={(e) => setPreviewBackgroundColor(e.target.value)}
-                    placeholder="#ffffff"
-                    className="flex-1"
-                  />
+              {/* 边框颜色 */}
+              <div className="space-y-3 border-b px-6 pb-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">边框颜色</Label>
+                  <Badge className="font-mono text-xs bg-primary text-primary-foreground">
+                    {previewBorderColor.toUpperCase()}
+                  </Badge>
+                </div>
+
+                {/* 预设颜色选项 */}
+                <div className="grid grid-cols-6 gap-2">
+                  {BORDER_PRESET_COLORS.map((color) => (
+                    <button
+                      key={color.value}
+                      type="button"
+                      onClick={() => setPreviewBorderColor(color.value)}
+                      className={`relative aspect-square w-full rounded-md border-2 transition-all duration-200 hover:scale-105 cursor-pointer
+                        after:content-[''] after:absolute after:bottom-[-6px] after:left-1/2 after:-translate-x-1/2
+                        after:w-3/4 after:h-1 after:bg-primary after:rounded-full after:transition-opacity after:duration-200
+                        ${previewBorderColor === color.value ? 'after:opacity-100' : 'after:opacity-0'}`}
+                      style={{
+                        backgroundColor: color.display,
+                        borderColor: 'rgb(226, 232, 240)',
+                      }}
+                      title={color.label}
+                    >
+                      {/* 透明背景的棋盘格 */}
+                      {color.value === 'transparent' && (
+                        <div
+                          className="absolute inset-0 rounded-sm"
+                          style={{
+                            backgroundImage: `
+                              linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+                              linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+                              linear-gradient(-45deg, transparent 75%, #e5e7eb 75%)
+                            `,
+                            backgroundSize: '16px 16px',
+                            backgroundPosition: '0 0, 0 8px, 8px -8px, -8px 0px',
+                          }}
+                        />
+                      )}
+                    </button>
+                  ))}
+
+                  {/* 自定义颜色取色器 */}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className={`relative aspect-square w-full rounded-md border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer overflow-hidden
+                          after:content-[''] after:absolute after:bottom-[-6px] after:left-1/2 after:-translate-x-1/2
+                          after:w-3/4 after:h-1 after:bg-primary after:rounded-full after:transition-opacity after:duration-200
+                          ${!BORDER_PRESET_COLORS.some(c => c.value === previewBorderColor) ? 'after:opacity-100 border-primary/60' : 'after:opacity-0 border-muted-foreground/40 hover:border-primary/60'}`}
+                        style={{
+                          backgroundColor: !BORDER_PRESET_COLORS.some(c => c.value === previewBorderColor)
+                            ? previewBorderColor
+                            : 'transparent',
+                        }}
+                        title="自定义颜色"
+                      >
+                        {/* 如果未选自定义颜色，显示4色块网格 */}
+                        {BORDER_PRESET_COLORS.some(c => c.value === previewBorderColor) && (
+                          <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 p-1.5 gap-1">
+                            <div className="rounded-sm" style={{ backgroundColor: '#ef4444' }} />
+                            <div className="rounded-sm" style={{ backgroundColor: '#22c55e' }} />
+                            <div className="rounded-sm" style={{ backgroundColor: '#3b82f6' }} />
+                            <div className="rounded-sm" style={{ backgroundColor: '#f59e0b' }} />
+                          </div>
+                        )}
+
+                        {/* 如果已选自定义颜色，显示加号图标 */}
+                        {!BORDER_PRESET_COLORS.some(c => c.value === previewBorderColor) && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                          </div>
+                        )}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-6" align="center" sideOffset={10}>
+                      <div className="flex flex-col items-center space-y-3">
+                        {/* react-colorful 颜色选择器 - 居中 */}
+                        <HexColorPicker
+                          color={previewBorderColor === 'transparent' ? '#ffffff' : previewBorderColor}
+                          onChange={(color) => setPreviewBorderColor(color.toUpperCase())}
+                          style={{ width: '240px', height: '180px' }}
+                        />
+                        {/* 颜色值输入框 - 与选择器同宽对齐 */}
+                        <div className="flex items-center gap-2" style={{ width: '240px' }}>
+                          <div
+                            className="w-10 h-10 rounded border-2 border-border flex-shrink-0"
+                            style={{ backgroundColor: previewBorderColor }}
+                          />
+                          <Input
+                            type="text"
+                            value={previewBorderColor.toUpperCase()}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPreviewBorderColor(e.target.value.toUpperCase())}
+                            className="font-mono text-sm flex-1"
+                            placeholder="#FFFFFF"
+                          />
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </section>
 
-          {/* 复制功能 */}
-          <Card>
-            <CardContent className="pt-6 space-y-2">
+            {/* 复制功能区域 */}
+            <section className="grid grid-cols-2 gap-3 px-6 pb-0">
               <Button
-                className="w-full justify-start"
+                className="flex flex-col items-center justify-center h-20 transition-all duration-200 hover:shadow-md cursor-pointer gap-2"
                 variant="default"
                 onClick={handleCopyRichText}
               >
-                <Copy className="h-4 w-4 mr-2" />
-                复制富文本
+                {copyRichTextSuccess ? (
+                  <>
+                    <Check className="h-5 w-5" />
+                    <span className="text-sm font-medium">复制成功</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-5 w-5" />
+                    <span className="text-sm font-medium">复制富文本</span>
+                  </>
+                )}
               </Button>
               <Button
-                className="w-full justify-start"
+                className="flex flex-col items-center justify-center h-20 transition-all duration-200 hover:shadow-md cursor-pointer gap-2"
                 variant="outline"
                 onClick={handleCopyHTML}
               >
-                <FileCode className="h-4 w-4 mr-2" />
-                复制HTML文字
+                {copyHTMLSuccess ? (
+                  <>
+                    <Check className="h-5 w-5" />
+                    <span className="text-sm font-medium">复制成功</span>
+                  </>
+                ) : (
+                  <>
+                    <FileCode className="h-5 w-5" />
+                    <span className="text-sm font-medium">复制HTML源码</span>
+                  </>
+                )}
               </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
+            </section>
+          </div>
+      {/*  </Card> */}
+    {/*  </div> */}
+ </> );
 }

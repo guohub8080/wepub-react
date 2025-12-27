@@ -217,93 +217,91 @@ export default function SideList() {
   );
 
   return (
-    <div className="h-full flex flex-col p-4">
-      {/* 顶部：标题和新建按钮 */}
-      <div className="flex-shrink-0 mb-4">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">文章列表</h2>
-          <Button size="sm" className="h-8 w-8 p-0">
-            <Plus className="h-4 w-4" />
-          </Button>
+    <Card className="h-full overflow-hidden">
+      <div className="h-full flex flex-col p-4 pt-0">
+
+        {/* 顶部：标题和新建按钮 */}
+        <div className="flex-shrink-0 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold">文章列表</h2>
+            <Button size="sm" className="h-8 w-8 p-0">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* 搜索框 */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="搜索文章..."
+              className="pl-8 h-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
 
-        {/* 搜索框 */}
-        <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="搜索文章..."
-            className="pl-8 h-9"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
+        {/* 文章列表 - 可以内部滚动 */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="space-y-2">
+            {filteredArticles.length === 0 ? (
+              <div className="text-center text-sm text-muted-foreground py-8">
+                {searchQuery ? '未找到相关文章' : '暂无文章'}
+              </div>
+            ) : (
+              filteredArticles.map((article) => (
+                <Card
+                  key={article.id}
+                  className={cn(
+                    'p-3 cursor-pointer transition-all duration-200',
+                    'hover:shadow-md hover:border-primary/50',
+                    selectedId === article.id && 'border-primary bg-accent/50 shadow-md'
+                  )}
+                  onClick={() => setSelectedId(article.id)}
+                >
+                  <div className="flex items-start gap-2">
+                    <FileText className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                    <div className="flex-1 min-w-0 space-y-1">
+                      {/* 标题 */}
+                      <h3 className="text-sm font-medium truncate">
+                        {article.title}
+                      </h3>
 
-      {/* 文章列表 - 可以内部滚动 */}
-      <div className="flex-1 overflow-y-auto min-h-0">
-        <div className="space-y-2">
-          {filteredArticles.length === 0 ? (
-            <div className="text-center text-sm text-muted-foreground py-8">
-              {searchQuery ? '未找到相关文章' : '暂无文章'}
-            </div>
-          ) : (
-            filteredArticles.map((article) => (
-              <Card
-                key={article.id}
-                className={cn(
-                  'p-3 cursor-pointer transition-all duration-200',
-                  'hover:shadow-md hover:border-primary/50',
-                  selectedId === article.id && 'border-primary bg-accent/50 shadow-md'
-                )}
-                onClick={() => setSelectedId(article.id)}
-              >
-                <div className="flex items-start gap-2">
-                  <FileText className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                  <div className="flex-1 min-w-0 space-y-1">
-                    {/* 标题 */}
-                    <h3 className="text-sm font-medium truncate">
-                      {article.title}
-                    </h3>
+                      {/* 摘要 */}
+                      {article.excerpt && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {article.excerpt}
+                        </p>
+                      )}
 
-                    {/* 摘要 */}
-                    {article.excerpt && (
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {article.excerpt}
-                      </p>
-                    )}
+                      {/* 标签 */}
+                      {article.tags && article.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {article.tags.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-primary/10 text-primary"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
 
-                    {/* 标签 */}
-                    {article.tags && article.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {article.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-primary/10 text-primary"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                      {/* 日期 */}
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        <span>{article.updatedAt.toLocaleDateString('zh-CN')}</span>
                       </div>
-                    )}
-
-                    {/* 日期 */}
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      <span>{article.updatedAt.toLocaleDateString('zh-CN')}</span>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))
-          )}
+                </Card>
+              ))
+            )}
+          </div>
         </div>
       </div>
-
-      {/* 底部：统计信息 */}
-      <div className="flex-shrink-0 pt-3 mt-3 border-t border-border text-xs text-muted-foreground">
-        共 {filteredArticles.length} 篇文章
-      </div>
-    </div>
+    </Card>
   );
 }
