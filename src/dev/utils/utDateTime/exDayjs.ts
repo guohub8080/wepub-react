@@ -14,7 +14,7 @@ import updateLocale from "dayjs/plugin/updateLocale"
 import utc from "dayjs/plugin/utc";
 // @ts-ignore
 import timezone from "dayjs/plugin/timezone";
-import { isNil } from 'lodash';
+import { isNil, isString, isNumber, isDate, isPlainObject, isFunction } from 'lodash';
 
 const DEFAULT_TIMEZONE = 'Asia/Shanghai';
 const API_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
@@ -33,20 +33,26 @@ dayjs.updateLocale("zh-cn", { weekStart: 7 })
 dayjs.tz.setDefault(DEFAULT_TIMEZONE)
 
 
-const getDayjs = (dayInput?: string | number | Date): Dayjs => {
+const getDayjs = (dayInput?: string | number | Date | Dayjs): Dayjs => {
     if (isNil(dayInput)) {
         return dayjs().tz(DEFAULT_TIMEZONE)
     }
 
-    if (dayInput instanceof Date) {
+    // 如果已经是 Dayjs 对象，直接返回（设置时区）
+    // 通过检查是否有 format 方法来判断（Dayjs 对象特有）
+    if (!isDate(dayInput) && !isString(dayInput) && !isNumber(dayInput) && isFunction((dayInput as any).format)) {
+        return (dayInput as Dayjs).tz(DEFAULT_TIMEZONE)
+    }
+
+    if (isDate(dayInput)) {
         return dayjs(dayInput).tz(DEFAULT_TIMEZONE)
     }
 
-    if (typeof dayInput === 'number') {
+    if (isNumber(dayInput)) {
         return dayjs(dayInput).tz(DEFAULT_TIMEZONE)
     }
 
-    if (typeof dayInput === 'string') {
+    if (isString(dayInput)) {
         const parsed = dayjs(dayInput)
         if (parsed.isValid()) {
             return parsed.tz(DEFAULT_TIMEZONE)

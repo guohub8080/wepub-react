@@ -1,6 +1,5 @@
 import { getDayjs } from '@dev/utils/utDateTime/exDayjs';
 import React from 'react';
-import SectionTitle from './SectionTitle';
 
 /**
  * WePubReact 默认示例文章
@@ -14,18 +13,73 @@ const articleMeta = {
   tag: ["介绍", "指南", "AI辅助"],
 }
 
+// SectionTitle 组件
+const SectionTitle: React.FC<{ title: string }> = ({ title }) => {
+  return (
+    <section style={{
+      marginBottom: '48px',
+      position: 'relative'
+    }}>
+      {/* 标题 */}
+      <section style={{
+        fontSize: '24px',
+        fontWeight: '700',
+        color: '#1e293b',
+        margin: '0 0 16px 0',
+        textAlign: 'center',
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        fontFamily: 'monospace'
+      }}>
+        {title}
+      </section>
+
+      {/* 装饰线 */}
+      <section style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '12px'
+      }}>
+        {/* 左短线 */}
+        <section style={{
+          width: '40px',
+          height: '2px',
+          background: '#cbd5e1'
+        }}></section>
+
+        {/* 方块 */}
+        <section style={{
+          width: '8px',
+          height: '8px',
+          background: '#3b82f6',
+          transform: 'rotate(45deg)'
+        }}></section>
+
+        {/* 右短线 */}
+        <section style={{
+          width: '40px',
+          height: '2px',
+          background: '#cbd5e1'
+        }}></section>
+      </section>
+    </section>
+  );
+};
+
 const DefaultArticle = () => {
   return (
-    <article style={{
+    <section style={{
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
       background: '#3b82f6',
-      padding: '40px 30px',
+      padding: '40px 16px',
       borderRadius: '20px',
-      color: '#fff'
+      color: '#fff',
+      boxShadow: 'none'
     }}>
       {/* 头部封面区域 */}
       <section style={{ marginBottom: '40px', textAlign: 'center' }}>
-        <div style={{
+        <section style={{
           display: 'inline-block',
           padding: '8px 20px',
           background: 'rgba(255,255,255,0.2)',
@@ -34,9 +88,9 @@ const DefaultArticle = () => {
           fontSize: '14px',
           fontWeight: '500'
         }}>
-          ✨ 开启代码创作新纪元
-        </div>
-        <h1 style={{
+          面向前端的页面框架
+        </section>
+        <section style={{
           fontSize: '42px',
           fontWeight: '700',
           color: '#fff',
@@ -45,14 +99,15 @@ const DefaultArticle = () => {
           textShadow: '0 2px 20px rgba(0,0,0,0.3)'
         }}>
           欢迎使用 WePubReact
-        </h1>
+        </section>
       </section>
 
       {/* 主内容区域 - 白色卡片 */}
       <section style={{
         backgroundColor: '#fff',
         borderRadius: '16px',
-        padding: '40px',
+        padding: '16px',
+        paddingTop:50,
         boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
         color: '#3f3f3f'
       }}>
@@ -60,7 +115,7 @@ const DefaultArticle = () => {
         <section style={{ marginBottom: '48px' }}>
           <SectionTitle title="项目介绍" />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* 框架介绍卡片 */}
             <section style={{
               padding: '28px 24px',
@@ -69,7 +124,7 @@ const DefaultArticle = () => {
               position: 'relative'
             }}>
               {/* 标签 */}
-              <div style={{
+              <section style={{
                 display: 'inline-block',
                 padding: '6px 16px',
                 background: '#3b82f6',
@@ -81,10 +136,10 @@ const DefaultArticle = () => {
                 letterSpacing: '0.5px'
               }}>
                 代码级页面框架
-              </div>
+              </section>
 
               {/* 内容 */}
-              <p style={{
+              <section style={{
                 fontSize: '17px',
                 lineHeight: '1.9',
                 color: '#2d3748',
@@ -94,30 +149,32 @@ const DefaultArticle = () => {
                 marginBottom: '20px'
               }}>
                 WePubReact 是一个面向专业工程师的页面框架，而非在线编辑器。它要求使用者具备 HTML、CSS、React、TypeScript 等前端技术能力。你将通过编写代码来构建页面，完全掌控每个细节。另外，得益于原生开发方式，你可以配合 Cursor 或 Claude Code 等智能开发工具，让 AI 帮助你快速创建个性化页面模板，实现标准化的个人作品展示。
-              </p>
+              </section>
 
               {/* 技术栈标签 */}
-              <div style={{
+              <section style={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                gap: '10px'
+                gap: '8px'
               }}>
                 {['HTML', 'CSS', 'TypeScript', 'React'].map((tech, index) => (
                   <span key={index} style={{
-                    padding: '6px 14px',
+                    padding: '6px 16px',
                     background: '#fff',
                     color: '#3b82f6',
-                    borderRadius: '8px',
+                    borderRadius: '20px',
                     fontSize: '13px',
                     fontWeight: '600',
-                    border: '2px solid #3b82f6',
+                    border: '1.5px solid #3b82f6',
                     fontFamily: 'monospace',
-                    letterSpacing: '0.5px'
+                    letterSpacing: '0.5px',
+                    boxShadow: '0 1px 3px rgba(59, 130, 246, 0.2)',
+                    transition: 'all 0.2s ease'
                   }}>
                     {tech}
                   </span>
                 ))}
-              </div>
+              </section>
             </section>
 
             {/* SVG 支持卡片 */}
@@ -128,7 +185,7 @@ const DefaultArticle = () => {
               position: 'relative'
             }}>
               {/* 标签 */}
-              <div style={{
+              <section style={{
                 display: 'inline-block',
                 padding: '6px 16px',
                 background: '#2563eb',
@@ -140,10 +197,10 @@ const DefaultArticle = () => {
                 letterSpacing: '0.5px'
               }}>
                 SVG 增强支持
-              </div>
+              </section>
 
               {/* 内容 */}
-              <p style={{
+              <section style={{
                 fontSize: '17px',
                 lineHeight: '1.9',
                 color: '#2d3748',
@@ -153,41 +210,43 @@ const DefaultArticle = () => {
                 marginBottom: '20px'
               }}>
                 内置强大的 SVG 组件系统，支持图形化内容创作。提供丰富的 SVG 工具库，包括动画控制、路径编辑、渐变填充等功能。让你可以轻松创建矢量图形、图标、插画等视觉元素，并将其与页面内容完美融合。
-              </p>
+              </section>
 
               {/* 技术栈标签 */}
-              <div style={{
+              <section style={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                gap: '10px'
+                gap: '8px'
               }}>
                 {['SVG', '动画', '矢量图形', '可视化'].map((tech, index) => (
                   <span key={index} style={{
-                    padding: '6px 14px',
+                    padding: '6px 16px',
                     background: '#fff',
-                    color: '#2563eb',
-                    borderRadius: '8px',
+                    color: '#3b82f6',
+                    borderRadius: '20px',
                     fontSize: '13px',
                     fontWeight: '600',
-                    border: '2px solid #2563eb',
+                    border: '1.5px solid #3b82f6',
                     fontFamily: 'monospace',
-                    letterSpacing: '0.5px'
+                    letterSpacing: '0.5px',
+                    boxShadow: '0 1px 3px rgba(59, 130, 246, 0.2)',
+                    transition: 'all 0.2s ease'
                   }}>
                     {tech}
                   </span>
                 ))}
-              </div>
+              </section>
             </section>
-          </div>
+          </section>
         </section>
 
         {/* 核心特性 */}
         <section style={{ marginBottom: '48px' }}>
           <SectionTitle title="核心特性" />
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
+          <section style={{
+            display: 'flex',
+            flexDirection: 'column',
             gap: '16px'
           }}>
             <section style={{
@@ -197,7 +256,7 @@ const DefaultArticle = () => {
               border: '1px solid rgba(59, 130, 246, 0.2)',
               transition: 'all 0.3s ease'
             }}>
-              <div style={{
+              <section style={{
                 width: '48px',
                 height: '48px',
                 background: '#3b82f6',
@@ -213,8 +272,8 @@ const DefaultArticle = () => {
                   <path d="M2 2l7.586 7.586"></path>
                   <circle cx="11" cy="11" r="2"></circle>
                 </svg>
-              </div>
-              <h3 style={{
+              </section>
+              <section style={{
                 fontSize: '18px',
                 fontWeight: '700',
                 color: '#1e40af',
@@ -222,15 +281,15 @@ const DefaultArticle = () => {
                 margin: '0 0 10px 0'
               }}>
                 专业页面框架
-              </h3>
-              <p style={{
+              </section>
+              <section style={{
                 fontSize: '14px',
                 lineHeight: '1.7',
                 color: '#475569',
                 margin: 0
               }}>
                 使用 HTML + CSS + React + TypeScript 构建页面。支持组件化开发、Tailwind CSS 工具类，完全掌控页面细节。
-              </p>
+              </section>
             </section>
 
             <section style={{
@@ -240,7 +299,7 @@ const DefaultArticle = () => {
               border: '1px solid rgba(59, 130, 246, 0.2)',
               transition: 'all 0.3s ease'
             }}>
-              <div style={{
+              <section style={{
                 width: '48px',
                 height: '48px',
                 background: '#2563eb',
@@ -256,8 +315,8 @@ const DefaultArticle = () => {
                   <circle cx="15" cy="9" r="2"></circle>
                   <path d="M8 14h8"></path>
                 </svg>
-              </div>
-              <h3 style={{
+              </section>
+              <section style={{
                 fontSize: '18px',
                 fontWeight: '700',
                 color: '#1e40af',
@@ -265,15 +324,15 @@ const DefaultArticle = () => {
                 margin: '0 0 10px 0'
               }}>
                 AI 辅助开发
-              </h3>
-              <p style={{
+              </section>
+              <section style={{
                 fontSize: '14px',
                 lineHeight: '1.7',
                 color: '#475569',
                 margin: 0
               }}>
                 在 Cursor 或 Claude Code 中，让 AI 帮你编写页面代码、调整样式、添加功能。描述需求，实时生成。
-              </p>
+              </section>
             </section>
 
             <section style={{
@@ -283,7 +342,7 @@ const DefaultArticle = () => {
               border: '1px solid rgba(59, 130, 246, 0.2)',
               transition: 'all 0.3s ease'
             }}>
-              <div style={{
+              <section style={{
                 width: '48px',
                 height: '48px',
                 background: '#1d4ed8',
@@ -300,8 +359,8 @@ const DefaultArticle = () => {
                   <line x1="16" y1="17" x2="8" y2="17"></line>
                   <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-              </div>
-              <h3 style={{
+              </section>
+              <section style={{
                 fontSize: '18px',
                 fontWeight: '700',
                 color: '#1e40af',
@@ -309,15 +368,15 @@ const DefaultArticle = () => {
                 margin: '0 0 10px 0'
               }}>
                 模板标准化
-              </h3>
-              <p style={{
+              </section>
+              <section style={{
                 fontSize: '14px',
                 lineHeight: '1.7',
                 color: '#475569',
                 margin: 0
               }}>
                 创建可复用的个人作品模板。统一的视觉风格、一致的交互体验、标准化的内容结构。
-              </p>
+              </section>
             </section>
 
             <section style={{
@@ -327,7 +386,7 @@ const DefaultArticle = () => {
               border: '1px solid rgba(59, 130, 246, 0.2)',
               transition: 'all 0.3s ease'
             }}>
-              <div style={{
+              <section style={{
                 width: '48px',
                 height: '48px',
                 background: '#1e40af',
@@ -342,8 +401,8 @@ const DefaultArticle = () => {
                   <polyline points="16 6 12 2 8 6"></polyline>
                   <line x1="12" y1="2" x2="12" y2="15"></line>
                 </svg>
-              </div>
-              <h3 style={{
+              </section>
+              <section style={{
                 fontSize: '18px',
                 fontWeight: '700',
                 color: '#1e40af',
@@ -351,222 +410,193 @@ const DefaultArticle = () => {
                 margin: '0 0 10px 0'
               }}>
                 多平台发布
-              </h3>
-              <p style={{
+              </section>
+              <section style={{
                 fontSize: '14px',
                 lineHeight: '1.7',
                 color: '#475569',
                 margin: 0
               }}>
                 一键复制 HTML 到微信公众号、知乎、掘金等平台。保持完美排版，无需二次调整。
-              </p>
+              </section>
             </section>
-          </div>
+          </section>
         </section>
 
         {/* 使用指南 */}
         <section style={{ marginBottom: '48px' }}>
           <SectionTitle title="快速开始" />
 
-          <div style={{ display: 'grid', gap: '16px' }}>
+          <section style={{ display: 'grid', gap: '12px' }}>
             <section style={{
-              padding: '20px',
+              padding: '16px',
               background: '#f8fafc',
-              borderRadius: '8px',
-              borderLeft: '4px solid #3b82f6'
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              borderLeft: '4px solid #3b82f6',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
             }}>
-              <div style={{
+              <section style={{
                 display: 'flex',
+                flexDirection: 'column',
                 gap: '12px'
               }}>
-                <div style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '6px',
-                  background: '#3b82f6',
+                <section style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                   color: '#fff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: '700',
-                  fontSize: '16px',
-                  flexShrink: 0
+                  fontSize: '20px',
+                  flexShrink: 0,
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
                 }}>
                   1
-                </div>
-                <div>
-                  <h3 style={{
-                    fontSize: '16px',
+                </section>
+                <section style={{ flex: 1 }}>
+                  <section style={{
+                    fontSize: '18px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    margin: '0 0 4px 0'
+                    margin: '0 0 6px 0'
                   }}>
                     克隆项目
-                  </h3>
-                  <p style={{
+                  </section>
+                  <section style={{
                     fontSize: '14px',
                     lineHeight: '1.6',
                     color: '#64748b',
                     margin: 0
                   }}>
-                    克隆仓库，运行 <code style={{
-                      backgroundColor: '#e2e8f0',
-                      padding: '2px 6px',
-                      borderRadius: '3px',
+                    克隆 WePubReact 仓库，运行 <section style={{
+                      backgroundColor: '#f1f5f9',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
                       fontFamily: 'monospace',
+                      fontWeight: '600',
                       color: '#dc2626',
                       fontSize: '13px'
-                    }}>pnpm install</code> 安装依赖
-                  </p>
-                </div>
-              </div>
+                    }}>pnpm install</section> 安装依赖
+                  </section>
+                </section>
+              </section>
             </section>
 
             <section style={{
-              padding: '20px',
+              padding: '16px',
               background: '#f8fafc',
-              borderRadius: '8px',
-              borderLeft: '4px solid #2563eb'
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              borderLeft: '4px solid #2563eb',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
             }}>
-              <div style={{
+              <section style={{
                 display: 'flex',
+                flexDirection: 'column',
                 gap: '12px'
               }}>
-                <div style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '6px',
-                  background: '#2563eb',
+                <section style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                   color: '#fff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: '700',
-                  fontSize: '16px',
-                  flexShrink: 0
+                  fontSize: '20px',
+                  flexShrink: 0,
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
                 }}>
                   2
-                </div>
-                <div>
-                  <h3 style={{
-                    fontSize: '16px',
+                </section>
+                <section style={{ flex: 1 }}>
+                  <section style={{
+                    fontSize: '18px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    margin: '0 0 4px 0'
+                    margin: '0 0 6px 0'
                   }}>
                     创建文章
-                  </h3>
-                  <p style={{
+                  </section>
+                  <section style={{
                     fontSize: '14px',
                     lineHeight: '1.6',
                     color: '#64748b',
                     margin: 0
                   }}>
-                    在 <code style={{
-                      backgroundColor: '#e2e8f0',
-                      padding: '2px 6px',
-                      borderRadius: '3px',
+                    在 <section style={{
+                      backgroundColor: '#f1f5f9',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
                       fontFamily: 'monospace',
+                      fontWeight: '600',
                       color: '#dc2626',
                       fontSize: '13px'
-                    }}>src/articles</code> 创建 .tsx 文件
-                  </p>
-                </div>
-              </div>
+                    }}>src/articles</section> 创建 .tsx 文件
+                  </section>
+                </section>
+              </section>
             </section>
 
             <section style={{
-              padding: '20px',
+              padding: '16px',
               background: '#f8fafc',
-              borderRadius: '8px',
-              borderLeft: '4px solid #1d4ed8'
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              borderLeft: '4px solid #1d4ed8',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
             }}>
-              <div style={{
+              <section style={{
                 display: 'flex',
+                flexDirection: 'column',
                 gap: '12px'
               }}>
-                <div style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '6px',
-                  background: '#1d4ed8',
+                <section style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
                   color: '#fff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: '700',
-                  fontSize: '16px',
-                  flexShrink: 0
+                  fontSize: '20px',
+                  flexShrink: 0,
+                  boxShadow: '0 4px 12px rgba(29, 78, 216, 0.3)'
                 }}>
                   3
-                </div>
-                <div>
-                  <h3 style={{
-                    fontSize: '16px',
+                </section>
+                <section style={{ flex: 1 }}>
+                  <section style={{
+                    fontSize: '18px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    margin: '0 0 4px 0'
-                  }}>
-                    AI 辅助开发
-                  </h3>
-                  <p style={{
-                    fontSize: '14px',
-                    lineHeight: '1.6',
-                    color: '#64748b',
-                    margin: 0
-                  }}>
-                    使用 Cursor 或 Claude Code 让 AI 帮你编写代码
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section style={{
-              padding: '20px',
-              background: '#f8fafc',
-              borderRadius: '8px',
-              borderLeft: '4px solid #1e40af'
-            }}>
-              <div style={{
-                display: 'flex',
-                gap: '12px'
-              }}>
-                <div style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '6px',
-                  background: '#1e40af',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: '700',
-                  fontSize: '16px',
-                  flexShrink: 0
-                }}>
-                  4
-                </div>
-                <div>
-                  <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    color: '#1e293b',
-                    margin: '0 0 4px 0'
+                    margin: '0 0 6px 0'
                   }}>
                     发布分享
-                  </h3>
-                  <p style={{
+                  </section>
+                  <section style={{
                     fontSize: '14px',
                     lineHeight: '1.6',
                     color: '#64748b',
                     margin: 0
                   }}>
-                    浏览器预览，满意后复制 HTML 到目标平台
-                  </p>
-                </div>
-              </div>
+                    浏览器预览效果，满意后一键复制 HTML 到目标平台
+                  </section>
+                </section>
+              </section>
             </section>
-          </div>
+          </section>
         </section>
 
         {/* 技术亮点 */}
@@ -577,7 +607,7 @@ const DefaultArticle = () => {
           marginBottom: '0',
           border: '1px solid #e2e8f0'
         }}>
-          <h2 style={{
+          <section style={{
             fontSize: '20px',
             fontWeight: '700',
             color: '#1e293b',
@@ -588,73 +618,83 @@ const DefaultArticle = () => {
             fontFamily: 'monospace'
           }}>
             技术栈
-          </h2>
+          </section>
 
-          <div style={{
+          <section style={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: '10px',
+            gap: '8px',
             justifyContent: 'center'
           }}>
             {[
-              { name: 'React 18', color: '#3b82f6' },
-              { name: 'TypeScript', color: '#2563eb' },
-              { name: 'Vite', color: '#1d4ed8' },
-              { name: 'Tailwind CSS', color: '#1e40af' },
-              { name: 'Zustand', color: '#1e3a8a' },
-              { name: 'shadcn/ui', color: '#1e3a8a' }
+              'React 18', 'TypeScript', 'Vite', 'Tailwind CSS v4',
+              'Radix UI', 'Zustand', 'Jotai', 'React Router', 'Motion', 'MDX',
+              'Syntax Highlighter', 'Lucide Icons', 'Heroicons', 'Day.js', 'Axios',
+              'Prettier', '@dnd-kit', 'Ahooks', 'Lodash', 'Ramda',
+              'React Hot Toast', 'Monaco Editor', 'Chroma.js', 'Culori',
+              'Gray Matter', 'Highlight.js', 'Shiki', 'Prism',
+              'Qrcode.react', 'React Icons', 'date-fns',
+              'Copy to Clipboard', 'Class Variance Authority', 'Cmdk',
+              'Tailwind Merge', 'Clsx', 'Immer', 'React Use', 'UseHooks TS',
+              'Ant Design', 'Emotion', 'Headless UI', 'Re-resizable', 'React RND',
+              'React Colorful', 'Jaames IRO', 'KeyboardJS',
+              'UA Parser JS', 'JSEncrypt', 'jsrsasign', 'JS Base64',
+              'React Device Detect', 'React Image Size', 'React Type Animation',
+              'React Async', 'React Day Picker', '@uiw React JSON View',
+              '...'
             ].map((tech, index) => (
-              <div key={index} style={{
-                padding: '8px 16px',
+              <section key={index} style={{
+                padding: '6px 16px',
                 background: '#fff',
                 borderRadius: '20px',
-                border: '1px solid #e2e8f0',
-                fontSize: '14px',
+                border: '1.5px solid #3b82f6',
+                fontSize: '13px',
                 fontWeight: '600',
-                color: tech.color,
+                color: '#3b82f6',
                 fontFamily: 'monospace',
                 letterSpacing: '0.5px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                boxShadow: '0 1px 3px rgba(59, 130, 246, 0.2)',
+                transition: 'all 0.2s ease'
               }}>
-                {tech.name}
-              </div>
+                {tech}
+              </section>
             ))}
-          </div>
+          </section>
         </section>
       </section>
 
       {/* 开源协议 */}
       <section style={{
         textAlign: 'center',
+        marginTop:20,
         padding: '30px 20px',
-        borderTop: '1px solid rgba(255,255,255,0.2)',
         color: '#fff'
       }}>
-        <div style={{
+        <section style={{
           display: 'inline-block',
           padding: '8px 20px',
           background: 'rgba(255,255,255,0.15)',
           borderRadius: '20px',
           marginBottom: '12px'
         }}>
-          <p style={{
+          <section style={{
             fontSize: '14px',
             color: '#fff',
             margin: 0,
             fontWeight: '600'
           }}>
             WePubReact
-          </p>
-        </div>
-        <p style={{
+          </section>
+        </section>
+        <section style={{
           fontSize: '12px',
           color: 'rgba(255,255,255,0.8)',
           margin: 0
         }}>
           Built by guohub8080 with Claude Code
-        </p>
+        </section>
       </section>
-    </article>
+    </section>
   );
 };
 

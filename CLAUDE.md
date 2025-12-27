@@ -260,3 +260,11 @@ import { initialCards } from "../../../../apps/Home/cardsConfig.tsx"
    - 确保没有语法错误（如Unexpected token、JSX结构错误等）
    - 如果有语法错误，立即修复而不是依赖用户报告
    - 只有在确认代码正常编译和运行后才能认为任务完成
+
+## Git 提交规范
+
+### 提交命令简写
+- **c** - `git add` + `git commit` (提交但不push)
+- **cp** - `git add` + `git commit` + `git push` (提交并push)
+
+当用户输入 "c" 或 "cp" 时，按照上述含义执行相应的git操作。

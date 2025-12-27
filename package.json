@@ -124,6 +124,7 @@
     "ua-parser-js": "^2.0.6",
     "use-url-search-params": "^2.5.1",
     "usehooks-ts": "^2.16.0",
+    "uuid": "^13.0.0",
     "vite-plugin-mdx": "^3.6.1",
     "webmidi": "^3.1.14",
     "zustand": "^4.5.7"
@@ -136,6 +137,7 @@
     "@types/node": "^20.19.21",
     "@types/react": "^18.3.26",
     "@types/react-dom": "^18.3.7",
+    "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "@vitejs/plugin-react": "^5.0.4",

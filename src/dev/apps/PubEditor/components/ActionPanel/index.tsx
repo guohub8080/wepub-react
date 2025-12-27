@@ -30,6 +30,28 @@ const rgbToHex = (rgb: string): string => {
   }).join('');
 };
 
+// 判断颜色是否为浅色（用于决定使用黑色还是白色圆点）
+const isLightColor = (color: string): boolean => {
+  // 处理 rgb() 格式
+  const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (rgbMatch) {
+    const [, r, g, b] = rgbMatch;
+    const brightness = (parseInt(r) * 299 + parseInt(g) * 587 + parseInt(b) * 114) / 1000;
+    return brightness > 128;
+  }
+
+  // 处理 hex 格式
+  const hexMatch = color.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+  if (hexMatch) {
+    const [, r, g, b] = hexMatch;
+    const brightness = (parseInt(r, 16) * 299 + parseInt(g, 16) * 587 + parseInt(b, 16) * 114) / 1000;
+    return brightness > 128;
+  }
+
+  // 默认返回 false（使用白色圆点）
+  return false;
+};
+
 // 预设画布颜色
 const CANVAS_PRESET_COLORS = [
   { value: 'transparent', label: '透明', display: '#ffffff' },
@@ -310,12 +332,15 @@ export default function ActionPanel() {
                           </div>
                         )}
 
-                        {/* 如果已选自定义颜色，显示加号图标 */}
+                        {/* 如果已选自定义颜色，显示圆圈图标 */}
                         {!CANVAS_PRESET_COLORS.some(c => c.value === previewBackgroundColor) && (
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                            </svg>
+                            <div
+                              className="w-2 h-2 rounded-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                              style={{
+                                backgroundColor: isLightColor(previewBackgroundColor) ? '#000000' : '#ffffff'
+                              }}
+                            />
                           </div>
                         )}
                       </button>
@@ -419,12 +444,15 @@ export default function ActionPanel() {
                           </div>
                         )}
 
-                        {/* 如果已选自定义颜色，显示加号图标 */}
+                        {/* 如果已选自定义颜色，显示圆圈图标 */}
                         {!BORDER_PRESET_COLORS.some(c => c.value === previewBorderColor) && (
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                            </svg>
+                            <div
+                              className="w-2 h-2 rounded-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                              style={{
+                                backgroundColor: isLightColor(previewBorderColor) ? '#000000' : '#ffffff'
+                              }}
+                            />
                           </div>
                         )}
                       </button>

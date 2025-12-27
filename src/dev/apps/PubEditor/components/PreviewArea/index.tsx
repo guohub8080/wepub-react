@@ -18,17 +18,16 @@ export default function PreviewArea() {
   }, [setPreviewContentRef]);
 
   return (
-    <div className="h-full flex flex-col items-center">
+    <div className="h-auto pb-0 flex flex-col items-center" style={{marginBottom:50}}>
       {/* 外层容器 - 占满可用空间 */}
-      <div className="relative h-full flex flex-col w-full">
+      <div className="relative pb-0 mb-0 flex flex-col w-full">
         {/* 内容区域 - 可调整宽度，居中显示 */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden flex justify-center"
-         style={{
-          backgroundColor: previewBackgroundColor,
-          transition: 'background-color 0.3s ease-in-out',
-         padding: previewPadding,
-         marginBottom:50,
-         }}
+        <div className="flex-1 mb-0 overflow-y-auto overflow-x-hidden flex justify-center"
+          style={{
+            backgroundColor: previewBackgroundColor,
+            transition: 'background-color 0.3s ease-in-out',
+            padding: previewPadding,
+          }}
         >
           <div
             style={{
@@ -43,7 +42,7 @@ export default function PreviewArea() {
               style={{
                 width: '100%',
                 maxWidth: '100%',
-                boxSizing:"content-box",
+                boxSizing: "content-box",
               }}
             >
               {/* 动态边框 - 完全在容器内，不触发滚动 */}

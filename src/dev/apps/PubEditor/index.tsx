@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTitle } from '@shadcn/components/ui/sheet.tsx
 import { usePubEditorStore, PUB_EDITOR_LAYOUT } from './store/usePubEditorStore';
 import useGlobalSettings from '@dev/store/useGlobalSettings';
 import { Card } from '@shadcn/components/ui/card.tsx';
+import { idConflicts } from '@articles/data/articlesLoader';
 
 /**
  * PubEditor 主布局组件
@@ -135,7 +136,8 @@ export default function PubEditor() {
     >
       {/* 左侧抽屉 - 小于1280px时使用 */}
       <Sheet open={mobileShowSideList} onOpenChange={setMobileSideList}>
-        <SheetContent side="left" className="p-0" style={{ width: `${PUB_EDITOR_LAYOUT.SIDE_LIST_WIDTH}px` }}>
+        <SheetContent side="left" className="p-0" hideClose={true} style={{ width: `${PUB_EDITOR_LAYOUT.SIDE_LIST_WIDTH}px` }}>
+          <SheetTitle className="sr-only">文章列表</SheetTitle>
           <SideList />
         </SheetContent>
       </Sheet>
@@ -195,6 +197,32 @@ export default function PubEditor() {
               top: `${navigationHeight}px`,
             }}
           >
+            {/* 文章ID冲突警告 - 在卡片外面 */}
+            {idConflicts.length > 0 && (
+              <div className="mb-4 rounded-lg border-2 border-red-500 bg-red-50 p-4 space-y-3">
+                <div className="flex items-start gap-2">
+                  <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.932-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.932 3z" />
+                  </svg>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-semibold text-red-800 mb-1">文章时间冲突</h4>
+                    <p className="text-xs text-red-700">以下文章使用了相同的发布时间，导致ID冲突：</p>
+                  </div>
+                </div>
+                {idConflicts.map((conflict, idx) => (
+                  <div key={idx} className="bg-white rounded-md p-3 border border-red-200">
+                    <div className="text-xs font-mono text-red-600 mb-2">时间ID: {conflict.id}</div>
+                    <ul className="space-y-1">
+                      {conflict.articles.map((article, articleIdx) => (
+                        <li key={articleIdx} className="text-xs text-red-700">
+                          • {article.title} <span className="text-red-400 ml-1">({article.path})</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
             <Card className="bg-card rounded-lg pt-0">
               <ActionPanel />
             </Card>
