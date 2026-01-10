@@ -1,0 +1,82 @@
+export const title = "AIECO 主框架";
+
+
+# {title}
+
+
+## 导入
+
+`AIECO` 是 AIECO 主题的核心框架容器，用于包裹整个文章内容。
+
+```tsx
+import AIECO from "@aieco/frames/MainFrame";
+```
+
+## 主要功能
+
+| 功能 | 说明 |
+|------|------|
+| 设置最大宽度 | 限制内容最大宽度为 650px（微信公众号标准宽度） |
+| 内容居中 | 通过 `margin: 0 auto` 实现内容水平居中 |
+| 强制应用宽度 | 使用 CSS `!important` 确保宽度设置不被覆盖 |
+| 编辑器标识 | 添加编辑器元数据标识信息 |
+
+## 内部实现
+
+AIECO 框架使用 React 的 `useEffect` 和 `useRef` 来动态设置样式：
+
+```tsx
+const ref = useRef(null)
+
+useEffect(() => {
+  if (ref) {
+    // 使用 !important 强制设置最大宽度
+    ref.current.style.setProperty("max-width", "650px", "important")
+  }
+}, [])
+```
+
+## HTML 输出
+
+渲染后的 HTML 结构：
+
+```html
+<section class="Wechat HTML Edit Tool powered by guozhongtian."
+         data-tool-by="gzt"
+         html-editor-name="guo zhongtian"
+         style="max-width: 650px; margin: 0 auto;">
+  <!-- 文章内容 -->
+</section>
+```
+
+## Props 参数
+
+AIECO 框架组件接收以下参数：
+
+| 参数名 | 类型 | 必填 | 默认值 | 说明 |
+|--------|------|------|--------|------|
+| `children` | `ReactNode` | 是 | - | 子元素，通常包含 `HeadAIECO` 和 `ArticleFrame` |
+
+## TypeScript 类型定义
+
+```tsx
+interface MainFrameAIECOProps {
+  children?: ReactNode;
+}
+```
+
+## 使用示例
+
+```tsx
+import AIECO from "@aieco/frames/MainFrame";
+import HeadAIECO from "@aieco/heads/HeadAIECO";
+import ArticleFrame from "@aieco/FullArticleFrame";
+
+export default () => {
+  return (
+    <AIECO>
+      {/* 内部内容 */}
+    </AIECO>
+  );
+};
+```
