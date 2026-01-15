@@ -1,0 +1,82 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@dev/*": [
+        "./src/dev/*"
+      ],
+      "@apps/*": [
+        "./src/dev/apps/*"
+      ],
+      "@comps/*": [
+        "./src/dev/components/*"
+      ],
+      "@assets/*": [
+        "./src/dev/assets/*"
+      ],
+      "@utils/*": [
+        "./src/dev/utils/*"
+      ],
+      "@api/*": [
+        "./src/dev/api/*"
+      ],
+      "@styles/*": [
+        "./src/dev/styles/*"
+      ],
+      "@pub-html/*": [
+        "./src/dev/pubComponents/PureHTML/*"
+      ],
+      "@pub-svg/*": [
+        "./src/dev/pubComponents/SVG/*"
+      ],
+      "@sns/*": [
+        "./src/dev/pubComponents/SnsTemplate/*"
+      ],
+      "@pub-utils/*": [
+        "src/dev/pubUtils/*"
+      ],
+      "@svg-anim/*": [
+        "src/dev/pubUtils/genSvgAnimate/*"
+      ],
+      "@aieco/*": [
+        "./src/dev/pubComponents/UserPackage/AIECO/*"
+      ],
+      "@svgDocument/*": [
+        "./src/books/SvgDocument/*"
+      ],
+      "@shadcn/*": [
+        "./src/dev/shadcn/*"
+      ],
+      "@books/*": [
+        "./src/books/*"
+      ],
+      "@articles/*": [
+        "./src/articles/*"
+      ],
+      "@music12doc/*": [
+        "./src/books/Music12Document/*"
+      ],
+      "@tonicml/*": [
+        "./src/dev/tonicml/*"
+      ],
+      "@mdx/*": [
+        "./src/dev/components/mdx/*"
+      ],
+      "@book-comps/*": [
+        "./src/dev/components/bookComponents/*"
+      ]
+    }
+  }
+}

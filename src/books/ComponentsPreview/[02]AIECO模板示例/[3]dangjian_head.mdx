@@ -1,0 +1,221 @@
+export const title = "DangjianHead 党建头部";
+import DangjianHead from "@aieco/heads/DangjianHead";
+import { ViewerWithSlider } from "@book-comps"
+
+# {title}
+
+<ViewerWithSlider>
+  <DangjianHead mainTitle={["主标题的上联","主标题的下联"]} subTitle={["——副标题：","开展","某某","活动"]} />
+</ViewerWithSlider>
+`DangjianHead` 是党建风格的文章头部组件，包含飞鸟装饰、红色背景卡片和旗帜装饰，通常用于党建类公众号文章。相关gif图片均来自网络，仅作装饰使用。
+
+## 导入
+
+```tsx
+import DangjianHead from "@aieco/heads/DangjianHead";
+```
+
+## 主要功能
+
+| 功能 | 说明 |
+|------|------|
+| 飞鸟装饰 | 右上角动态飞鸟 GIF 装饰（60x60px） |
+| 红色卡片 | 深红色（#dc1416）背景卡片，圆角 8px |
+| 主标题 | 琥珀色粗体标题，支持多行显示 |
+| 副标题 | 浅琥珀色副标题，居中显示 |
+| 旗帜装饰 | 左下角旗帜 GIF 装饰（65x45px） |
+| 不换行词组 | 使用 `NoWrapText` 保持词组完整性 |
+
+## 内部实现
+
+DangjianHead 由三层结构组成：飞鸟层、卡片内容层、旗帜层
+
+```tsx
+// 飞鸟层（右上角）
+<SectionEx style={{
+  width: "100%",
+  display: "flex",
+  justifyContent: "end",
+  height: 20
+}}>
+  <ImgEx url={birdImg} style={{
+    width: 60,
+    height: 60,
+    marginLeft: "auto",
+    marginRight: 0,
+    marginBottom: -20
+  }} />
+</SectionEx>
+
+// 卡片内容层（中间红色背景）
+<SectionEx style={{
+  width: "100%",
+  backgroundColor: "#dc1416",
+  paddingTop: 15,
+  paddingBottom: 15,
+  paddingLeft: 20,
+  paddingRight: 20,
+  borderRadius: 8,
+  zIndex: 0
+}}>
+  {/* 主标题 */}
+  <section style={{
+    fontSize: 17,
+    display: "inline-flex",
+    columnGap: "1em",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    color: googleColors.amber400,
+    fontWeight: 800
+  }}>
+    <NoWrapText textList={mainTitle} />
+  </section>
+
+  {/* 副标题 */}
+  <section style={{
+    marginTop: 10,
+    fontSize: 16,
+    textAlign: "center",
+    color: googleColors.amber100
+  }}>
+    <NoWrapText textList={subTitle} />
+  </section>
+</SectionEx>
+
+// 旗帜层（左下角）
+<SectionEx style={{
+  width: "100%",
+  marginTop: -10,
+  zIndex: 999
+}}>
+  <ImgEx url={flagImg} style={{
+    width: 65,
+    height: 45,
+    marginRight: "auto"
+  }} />
+</SectionEx>
+```
+
+## Props 参数
+
+| 参数名 | 类型 | 必填 | 默认值 | 说明 |
+|--------|------|------|--------|------|
+| `mainTitle` | `(string \| ReactNode)[] \| ReactNode` | 是 | - | 主要标题，支持字符串数组或自定义 ReactNode |
+| `subTitle` | `(string \| ReactNode)[] \| ReactNode` | 是 | - | 副标题，支持字符串数组或自定义 ReactNode |
+| `children` | `ReactNode` | 否 | - | 自定义内容，传入后覆盖默认标题模板 |
+
+### 标题格式说明
+
+**字符串数组格式**（推荐）：
+```tsx
+// 每个字符串作为一个不换行词组
+mainTitle={["深学细悟砺初心", "履职赋能启新程"]}
+subTitle={["经济合作局", "举办2025年", "专兼职党务纪检干部培训班"]}
+```
+- 使用 `inline-flex` + `columnGap: 1em` 布局
+- 换行时保持横向间距，避免间距挤压
+
+**ReactNode 格式**（完全自定义）：
+```tsx
+mainTitle={<div>自定义内容</div>}
+subTitle={<span>自定义副标题</span>}
+```
+
+## TypeScript 类型定义
+
+```tsx
+interface DangjianHeadProps {
+  children?: ReactNode;
+  mainTitle: (string | ReactNode)[] | ReactNode;
+  subTitle: (string | ReactNode)[] | ReactNode;
+}
+```
+
+## 使用示例
+
+### 基础用法
+
+```tsx
+import AIECO from "@aieco/frames/MainFrame";
+import DangjianHead from "@aieco/heads/DangjianHead";
+import { chunk } from "lodash";
+
+export default () => {
+  // 每两个字符切割字符串
+  const titleChunks = chunk(
+    "经济合作局举办2025年专兼职党务纪检干部培训班".split(""),
+    2
+  ).map(arr => arr.join(""));
+
+  return (
+    <AIECO>
+      <DangjianHead
+        mainTitle={["深学细悟砺初心", "履职赋能启新程"]}
+        subTitle={titleChunks}
+      />
+      {/* 文章内容 */}
+    </AIECO>
+  );
+};
+```
+
+### 使用 children 自定义内容
+
+```tsx
+<DangjianHead
+  mainTitle={["标题1", "标题2"]}
+  subTitle={["副标题"]}
+>
+  {/* 完全自定义内容 */}
+  <section>自定义头部内容</section>
+</DangjianHead>
+```
+
+## 样式特点
+
+### 主标题样式
+
+| 属性 | 值 | 说明 |
+|------|------|------|
+| 字体大小 | 17px | - |
+| 颜色 | `googleColors.amber400` | 琥珀色 |
+| 字重 | 800 | 粗体 |
+| 布局方式 | `inline-flex` | 支持换行 |
+| 横向间距 | `columnGap: 1em` | 词组间保持间距 |
+| 换行方式 | `flexWrap: wrap` | 自动换行 |
+| 对齐方式 | 居中 | `justifyContent: center` |
+
+### 副标题样式
+
+| 属性 | 值 | 说明 |
+|------|------|------|
+| 字体大小 | 16px | - |
+| 颜色 | `googleColors.amber100` | 浅琥珀色 |
+| 上边距 | 10px | 与主标题间距 |
+| 对齐方式 | 居中 | `textAlign: center` |
+
+### 卡片样式
+
+| 属性 | 值 | 说明 |
+|------|------|------|
+| 背景色 | `#dc1416` | 深红色 |
+| 内边距 | 上下 15px，左右 20px | - |
+| 圆角 | 8px | - |
+| 层级 | `zIndex: 0` | 基础层级 |
+
+### 装饰图片
+
+| 图片 | 尺寸 | 位置 | 层级 |
+|------|------|------|------|
+| 飞鸟 GIF | 60x60px | 右上角 | 999 |
+| 旗帜 GIF | 65x45px | 左下角 | 999 |
+
+
+## 注意事项
+
+| 注意事项 | 说明 |
+|----------|------|
+| 标题自动换行 | 使用 `NoWrapText` 组件，确保词组不换行，词组间可换行 |
+| 层级关系 | 旗帜层级（999）> 卡片层级（0），确保旗帜覆盖卡片边缘 |
+| 负边距 | 旗帜使用 `marginTop: -10` 实现重叠效果 |
+| GIF 图片 | 飞鸟和旗帜都是动态 GIF，需要设置 `referrerPolicy="no-referrer"` |

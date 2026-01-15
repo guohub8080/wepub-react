@@ -1,0 +1,113 @@
+export const title = "HeadAIECO 默认头部";
+import HeadAIECO from "@aieco/heads/HeadAIECO";
+
+# {title}
+
+<HeadAIECO />
+
+`HeadAIECO` 是 AIECO 主题的默认头部组件，显示公众号引导关注信息。
+
+
+## 导入
+
+```tsx
+import HeadAIECO from "@aieco/heads/HeadAIECO";
+```
+
+## 主要功能
+
+| 功能 | 说明 |
+|------|------|
+| 公众号 Logo | 显示 AIECO 公众号标识图标（35x35px） |
+| 引导关注 | 显示"点击上方蓝字关注"提示文字 |
+| 公众号名称 | 显示"商务部经济合作局"名称 |
+| 横向布局 | Logo 和文字信息横向排列，左对齐 |
+
+## 内部实现
+
+HeadAIECO 使用 Flexbox 布局，包含图片和文字两部分：
+
+```tsx
+const fontSize = 12
+const fontColor = wechatColors.aiecoDarkBlue
+
+<section style={{
+  width: "100%",
+  display: "flex",
+  alignItems: "start",
+  marginBottom: 8
+}}>
+  {/* Logo 区域 */}
+  <section>
+    <img
+      src={aiecoLogo}
+      style={{width: 35, margin: 2, marginRight: 5}}
+      referrerPolicy="no-referrer"
+      alt=""
+    />
+  </section>
+
+  {/* 文字区域 */}
+  <section style={{
+    fontSize: fontSize,
+    color: fontColor,
+    paddingTop: 3
+  }}>
+    <span style={{color: "gray", fontSize: fontSize}}>
+      点击上方蓝字关注
+    </span>
+    <span style={{fontSize: fontSize}}>
+      商务部经济合作局
+    </span>
+  </section>
+</section>
+```
+
+## HTML 输出
+
+渲染后的 HTML 结构：
+
+```html
+<section style="width: 100%; display: flex; align-items: start; margin-bottom: 8px;">
+  <!-- Logo -->
+  <section>
+    <img src="..." style="width: 35px; margin: 2px; margin-right: 5px;" alt="" />
+  </section>
+
+  <!-- 文字 -->
+  <section style="font-size: 12px; color: #1e40af; padding-top: 3px;">
+    <span style="color: gray; font-size: 12px;">点击上方蓝字关注</span>
+    <span style="font-size: 12px;">商务部经济合作局</span>
+  </section>
+</section>
+```
+
+## Props 参数
+
+HeadAIECO 组件不接收任何参数。
+
+## TypeScript 类型定义
+
+```tsx
+// 无参数，直接调用即可
+const HeadAIECO = () => JSX.Element;
+```
+
+## 使用示例
+
+```tsx
+import AIECO from "@aieco/frames/MainFrame";
+import HeadAIECO from "@aieco/heads/HeadAIECO";
+import ArticleFrame from "@aieco/FullArticleFrame";
+
+export default () => {
+  return (
+    <AIECO>
+      <HeadAIECO />
+      <ArticleFrame underTitle={underTitle}>
+        {/* 文章内容 */}
+      </ArticleFrame>
+    </AIECO>
+  );
+};
+```

@@ -1,0 +1,290 @@
+export const title = "P 和 B 文字组件";
+import P from "@aieco/docs/P";
+import B from "@aieco/docs/B";
+import wechatColors from "@aieco/presets/color";
+
+# {title}
+
+`P` 和 `B` 是 AIECO 主题的文字排版组件，用于显示文章正文内容和强调重点文字。
+
+## 快速示例
+
+```tsx
+// P 组件基础用法
+<P>这是普通段落，有首行缩进，两端对齐。</P>
+<P textIndent={0}>这是无首行缩进的段落。</P>
+<P textIndent={0} align="center">这是居中对齐的段落。</P>
+<P fontSize={14}>这是 14px 字体的段落。</P>
+<P mt={10} mb={25}>这是自定义边距的段落。</P>
+<P px={30}>这是自定义左右内边距的段落。</P>
+<P style={{ color: "#dc2626" }}>这是自定义样式的段落。</P>
+
+// B 组件基础用法
+<B>加粗文字</B>
+<B color={wechatColors.aiecoDarkBlue}>深蓝色加粗</B>
+<B color="red">红色加粗</B>
+
+// 组合使用
+<P>这是包含 <B color={wechatColors.aiecoDarkBlue}>加粗强调</B> 的段落。</P>
+```
+
+## 导入
+
+```tsx
+import P from "@aieco/docs/P";
+import B from "@aieco/docs/B";
+import wechatColors from "@aieco/presets/color";
+```
+
+## P 组件
+
+`P` 是段落组件，用于显示文章正文内容。
+
+### 主要功能
+
+| 功能 | 说明 |
+|------|------|
+| 首行缩进 | 默认 2em 缩进，可通过 `textIndent={0}` 取消 |
+| 对齐方式 | 支持 left/center/right 对齐 |
+| 行高设置 | 默认 1.75，提供良好阅读体验 |
+| 底部边距 | 默认 1em，段落间距适中 |
+
+### Props 参数
+
+| 参数名 | 类型 | 必填 | 默认值 | 说明 |
+|--------|------|------|--------|------|
+| `children` | `ReactNode` | 是 | - | 段落内容，支持文字、B 组件等 |
+| `textIndent` | `number \| string` | 否 | `"2em"` | 首行缩进大小，设为 0 取消缩进，支持数字（em单位）或字符串 |
+| `align` | `"center"` \| `"right"` | 否 | `"justify"`（两端对齐） | 文本对齐方式，默认两端对齐 |
+| `fontSize` | `number` | 否 | 17 | 字体大小（px） |
+| `mt` | `number` | 否 | 0 | 上边距（px） |
+| `mb` | `number` | 否 | 15 | 下边距（px） |
+| `px` | `number` | 否 | 15 | 左右内边距（px） |
+| `style` | `React.CSSProperties` | 否 | - | 自定义样式对象，会与默认样式合并 |
+
+### TypeScript 类型定义
+
+```tsx
+interface PProps {
+  children?: ReactNode;
+  textIndent?: number | string;
+  align?: "center" | "right";
+  fontSize?: number;
+  mt?: number;
+  mb?: number;
+  px?: number;
+  style?: React.CSSProperties;
+}
+```
+
+### 使用示例
+
+```tsx
+import P from "@aieco/docs/P";
+
+// 默认段落（有首行缩进，两端对齐）
+<P>这是普通段落，会自动添加首行缩进，默认两端对齐。</P>
+
+// 无首行缩进
+<P textIndent={0}>这是无首行缩进的段落。</P>
+
+// 居中对齐
+<P textIndent={0} align="center">这是居中对齐的段落。</P>
+
+// 右对齐
+<P textIndent={0} align="right">这是右对齐的段落。</P>
+
+// 自定义字体大小
+<P fontSize={14}>这是 14px 字体的段落。</P>
+
+// 自定义边距
+<P mt={10} mb={20}>这是上边距 10px、下边距 20px 的段落。</P>
+
+// 自定义左右内边距
+<P px={30}>这是左右内边距 30px 的段落。</P>
+
+// 自定义样式
+<P style={{ color: "red", backgroundColor: "#f0f0f0" }}>
+  这是自定义样式的段落。
+</P>
+
+// 包含加粗文字
+<P>这是包含 <B>加粗文字</B> 的段落。</P>
+
+// 组合使用
+<P
+  textIndent={0}
+  fontSize={16}
+  mt={15}
+  mb={25}
+  px={20}
+  align="center"
+  style={{ color: "#333" }}
+>
+  这是组合使用多个属性的段落。
+</P>
+```
+
+### 样式特点
+
+| 属性 | 默认值 | 说明 |
+|------|--------|------|
+| 首行缩进 | `"2em"` | 可通过 `textIndent={0}` 取消，支持数字或字符串 |
+| 对齐方式 | `"justify"`（两端对齐） | 支持 center/right，注意默认不是 left |
+| 行高 | `1.8` | 提供良好阅读体验 |
+| 下边距 | `15px` | 段落间距 |
+| 上边距 | `0` | - |
+| 左右内边距 | `15px` | - |
+| 字体大小 | `17px` | 可自定义 |
+| 文字颜色 | 继承 | 通常为深灰色 |
+
+## B 组件
+
+`B` 是加粗文字组件，用于强调重要内容。
+
+### 主要功能
+
+| 功能 | 说明 |
+|------|------|
+| 文字加粗 | 使用 `font-weight: bold` 加粗 |
+| 颜色自定义 | 支持自定义颜色，可使用预设颜色 |
+| 内联显示 | 不换行，与周围文字在同一行 |
+
+### Props 参数
+
+| 参数名 | 类型 | 必填 | 默认值 | 说明 |
+|--------|------|------|--------|------|
+| `children` | `ReactNode` | 是 | - | 加粗的文字内容 |
+| `color` | `string` | 否 | 继承 | 文字颜色，支持 `wechatColors` 预设 |
+
+### TypeScript 类型定义
+
+```tsx
+interface BProps {
+  children: ReactNode;
+  color?: string;
+}
+```
+
+### 使用示例
+
+```tsx
+import B from "@aieco/docs/B";
+import wechatColors from "@aieco/presets/color";
+
+// 默认加粗（继承颜色）
+<B>这是加粗文字</B>
+
+// 使用预设颜色
+<B color={wechatColors.aiecoDarkBlue}>深蓝色加粗</B>
+<B color={wechatColors.titleRed}>红色加粗</B>
+
+// 自定义颜色
+<B color="#ff6b6b">自定义红色加粗</B>
+<B color="rgb(255, 107, 107)">RGB 格式颜色</B>
+
+// 在段落中使用
+<P>这是包含 <B color={wechatColors.aiecoDarkBlue}>加粗强调</B> 的段落。</P>
+```
+
+### 样式特点
+
+| 属性 | 值 | 说明 |
+|------|------|------|
+| 字重 | bold | 加粗显示 |
+| 颜色 | 继承（默认） | 可通过 `color` 自定义 |
+| 显示方式 | inline | 与周围文字同行 |
+| 字体大小 | 继承 | 与周围文字一致 |
+
+## 预设颜色
+
+`wechatColors` 提供了多种预设颜色：
+
+| 颜色名 | 色值 | 适用场景 |
+|--------|------|----------|
+| `aiecoDarkBlue` | 深蓝色 | 标题、强调 |
+| `aiecoLightBlue` | 浅蓝色 | 装饰、背景 |
+| `titleRed` | 红色 | 红色主题标题 |
+| `lightBgBlue` | 浅蓝背景 | 内容背景 |
+| `lightBgYellow` | 浅黄背景 | 红色主题背景 |
+
+### 使用预设颜色
+
+```tsx
+import wechatColors from "@aieco/presets/color";
+
+<P textIndent={0}>
+  这是 <B color={wechatColors.aiecoDarkBlue}>深蓝色加粗</B>，
+  这是 <B color={wechatColors.titleRed}>红色加粗</B>。
+</P>
+```
+
+## 组合使用
+
+### 示例 1：标准段落
+
+```tsx
+<P>这是一段普通文字，包含 <B>加粗强调</B> 的内容。</P>
+```
+
+### 示例 2：标题段落
+
+```tsx
+<P textIndent={0}>
+  <B color={wechatColors.aiecoDarkBlue}>一、标题</B>
+</P>
+<P>这是标题下的正文内容，有首行缩进。</P>
+```
+
+### 示例 3：居中标题
+
+```tsx
+<P textIndent={0} align="center">
+  <B color={wechatColors.titleRed}>重要提示</B>
+</P>
+```
+
+### 示例 4：多段落排版
+
+```tsx
+<P textIndent={0}><B>1. 第一点：</B></P>
+<P>这是第一点的详细说明，有首行缩进。</P>
+
+<P textIndent={0}><B>2. 第二点：</B></P>
+<P>这是第二点的详细说明，同样有首行缩进。</P>
+```
+
+## 样式特点汇总
+
+### P 组件样式表
+
+| 属性 | 默认值 | 说明 |
+|------|--------|------|
+| 首行缩进 | `"2em"` | 可通过 `textIndent={0}` 取消，支持数字或字符串 |
+| 对齐方式 | `"justify"`（两端对齐） | 支持 center/right，注意默认不是 left |
+| 行高 | 1.8 | 阅读体验良好 |
+| 下边距 | 15px | 段落间距 |
+| 上边距 | 0 | 可通过 `mt` 自定义 |
+| 左右内边距 | 15px | 可通过 `px` 自定义 |
+| 字体大小 | 17px | 可通过 `fontSize` 自定义 |
+
+### B 组件样式表
+
+| 属性 | 默认值 | 说明 |
+|------|--------|------|
+| 字重 | bold | 加粗显示 |
+| 颜色 | 继承 | 可自定义 |
+| 显示方式 | inline | 不换行 |
+
+## 注意事项
+
+| 注意事项 | 说明 |
+|----------|------|
+| textIndent 单位 | 支持数字（自动转为 em）或字符串（如 `"2em"`、`"30px"`） |
+| align 默认值 | 默认是 `"justify"`（两端对齐），不是 `"left"` |
+| align 配合 | 通常配合 `textIndent={0}` 使用，避免缩进影响对齐效果 |
+| style 优先级 | `style` 对象会与默认样式合并，同名属性会覆盖默认值 |
+| 边距控制 | 使用 `mt`/`mb` 控制上下边距，`px` 控制左右内边距 |
+| 颜色格式 | 支持颜色名、十六进制、RGB、RGBA 等格式 |
+| 嵌套使用 | B 组件可以嵌套在 P 组件中使用 |
+| 空格处理 | 组件间会自动保留空格，无需手动添加 |
