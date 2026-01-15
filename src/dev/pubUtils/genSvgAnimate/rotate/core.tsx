@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { isUndefined, isArray } from 'lodash';
-import { genSvgKeys, SvgTimelineSegment } from '@pub-utils/svgKeySplines/genSvgKeys';
+import { genSvgKeySplines, SvgTimelineSegment } from '@pub-utils/genSvgKeySplines';
 import { RotateAnimationConfig, RotateOrigin } from './types.ts';
 import { ElementBoundsType, getOriginNumByText } from '../../common/getElementBounds.ts';
 import byDefault from '@utils/common/byDefault';
@@ -130,14 +130,14 @@ export function genAnimateRotate(config: RotateAnimationConfig) {
   // 计算总时长
   const totalDuration = timeline.reduce((sum, segment) => sum + segment.durationSeconds, 0);
 
-  // 使用 genSvgKeys 生成动画参数
+  // 使用 genSvgKeySplines 生成动画参数
   const angleTimeline: SvgTimelineSegment[] = timeline.map((segment, index) => ({
     keySplines: byDefault(segment.keySplines, getLinearBezier()),
     toValue: angles[index + 1],
     durationSeconds: segment.durationSeconds,
   }));
 
-  const angleKeys = genSvgKeys({
+  const angleKeys = genSvgKeySplines({
     initValue: initAngle,
     timeline: angleTimeline,
   });

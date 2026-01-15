@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { isUndefined } from 'lodash';
-import { genSvgKeys, SvgTimelineSegment } from '@pub-utils/svgKeySplines/genSvgKeys';
+import { genSvgKeySplines, SvgTimelineSegment } from '@pub-utils/genSvgKeySplines';
 import { PathStrokeAnimationConfig } from './types.ts';
 import byDefault from '@utils/common/byDefault';
 import { getLinearBezier } from '@pub-utils/getBezier';
@@ -81,14 +81,14 @@ export function genAnimatePathStroke(
   // 计算总时长
   const totalDuration = timeline.reduce((sum, segment) => sum + segment.durationSeconds, 0);
 
-  // 使用 genSvgKeys 生成动画参数
+  // 使用 genSvgKeySplines 生成动画参数
   const offsetTimeline: SvgTimelineSegment[] = timeline.map((segment, index) => ({
     keySplines: byDefault(segment.keySplines, getLinearBezier()),
     toValue: offsets[index + 1],
     durationSeconds: segment.durationSeconds,
   }));
 
-  const offsetKeys = genSvgKeys({
+  const offsetKeys = genSvgKeySplines({
     initValue: initialOffset,
     timeline: offsetTimeline,
   });

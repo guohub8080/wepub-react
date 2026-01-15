@@ -1,10 +1,12 @@
 /**
- * genSvgKeys - SVG 动画参数生成器
- * 
+ * genSvgKeySplines - SVG 动画参数生成器
+ *
  * 根据初始值和时间线配置，生成 SVG animate 标签所需的 keyTimes、keySplines 和 values
  */
 
 import { round } from 'lodash'
+
+// ============================================ Types ============================================
 
 export interface SvgTimelineSegment {
   /** 贝塞尔缓动参数（格式："x1 y1 x2 y2"） */
@@ -33,6 +35,8 @@ export interface SvgKeysResult {
   totalDuration: number;
 }
 
+// ============================================ Core Function ============================================
+
 /**
  * 生成 SVG 动画参数
  *
@@ -41,7 +45,7 @@ export interface SvgKeysResult {
  *
  * @example
  * ```typescript
- * const result = genSvgKeys({
+ * const result = genSvgKeySplines({
  *   initValue: 0,
  *   timeline: [
  *     { keySplines: '0.42 0 0.58 1', toValue: 100, durationSeconds: 2 },
@@ -58,7 +62,7 @@ export interface SvgKeysResult {
  * // }
  * ```
  */
-export function genSvgKeys(input: SvgTimeline): SvgKeysResult {
+export function genSvgKeySplines(input: SvgTimeline): SvgKeysResult {
   const { initValue, timeline } = input;
 
   // 参数验证
@@ -106,6 +110,8 @@ export function genSvgKeys(input: SvgTimeline): SvgKeysResult {
   };
 }
 
+// ============================================ Helper Functions ============================================
+
 /**
  * 验证 keySplines 格式是否正确
  * 应为 "x1 y1 x2 y2" 格式，4 个数字用空格分隔
@@ -121,4 +127,16 @@ function isValidKeySpline(spline: string): boolean {
   });
 }
 
+// ============================================ SVG Animation Whitelist ============================================
 
+// SVG 动画属性白名单
+export {
+  SVG_ANIMATION_WHITELIST,
+  WHITELIST_BY_ELEMENT,
+  isAttrInWhitelist,
+  isElementAttrValid,
+  getAttrInfo,
+  getSupportedAttrs,
+  type SvgAnimationElement,
+  type SvgAnimationAttr
+} from './svgAttrWhiteList.ts';

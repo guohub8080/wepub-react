@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { isUndefined } from 'lodash';
-import { genSvgKeys, SvgTimelineSegment } from '@pub-utils/svgKeySplines/genSvgKeys';
+import { genSvgKeySplines, SvgTimelineSegment } from '@pub-utils/genSvgKeySplines';
 import { OpacityAnimationConfig } from './types.ts';
 import byDefault from '@utils/common/byDefault';
 import { getEaseBezier } from '@pub-utils/getBezier';
@@ -84,14 +84,14 @@ export function genAnimateOpacity(config: OpacityAnimationConfig) {
   // 计算总时长
   const totalDuration = timeline.reduce((sum, segment) => sum + segment.durationSeconds, 0);
 
-  // 使用 genSvgKeys 生成动画参数
+  // 使用 genSvgKeySplines 生成动画参数
   const opacityTimeline: SvgTimelineSegment[] = timeline.map((segment, index) => ({
     keySplines: byDefault(segment.keySplines, getEaseBezier({ isIn: true, isOut: true })),
     toValue: opacities[index + 1],
     durationSeconds: segment.durationSeconds,
   }));
 
-  const opacityKeys = genSvgKeys({
+  const opacityKeys = genSvgKeySplines({
     initValue: initOpacity,
     timeline: opacityTimeline,
   });

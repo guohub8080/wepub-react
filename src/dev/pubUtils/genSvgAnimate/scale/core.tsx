@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { isUndefined, isArray } from 'lodash';
-import { genSvgKeys, SvgTimelineSegment } from '@pub-utils/svgKeySplines/genSvgKeys';
+import { genSvgKeySplines, SvgTimelineSegment } from '@pub-utils/genSvgKeySplines';
 import { ScaleAnimationConfig, ScaleOrigin } from './types.ts';
 import { ElementBoundsType, getOriginNumByText } from '../../common/getElementBounds.ts';
 import byDefault from '@utils/common/byDefault';
@@ -132,14 +132,14 @@ export function genAnimateScale(config: ScaleAnimationConfig) {
   // 计算总时长
   const totalDuration = timeline.reduce((sum, segment) => sum + segment.durationSeconds, 0);
 
-  // 使用 genSvgKeys 生成动画参数
+  // 使用 genSvgKeySplines 生成动画参数
   const scaleTimeline: SvgTimelineSegment[] = timeline.map((segment, index) => ({
     keySplines: byDefault(segment.keySplines, getEaseBezier({ isIn: true, isOut: true })),
     toValue: scales[index + 1],
     durationSeconds: segment.durationSeconds,
   }));
 
-  const scaleKeys = genSvgKeys({
+  const scaleKeys = genSvgKeySplines({
     initValue: initScale,
     timeline: scaleTimeline,
   });

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { isUndefined } from 'lodash';
-import { genSvgKeys, SvgTimelineSegment } from '@pub-utils/svgKeySplines/genSvgKeys';
+import { genSvgKeySplines, SvgTimelineSegment } from '@pub-utils/genSvgKeySplines';
 import { Point2D, TranslateAnimationConfig } from './types.ts';
 import byDefault from '@utils/common/byDefault';
 
@@ -97,7 +97,7 @@ export function genAnimateTranslate(config: TranslateAnimationConfig) {
   // 计算总时长
   const totalDuration = timeline.reduce((sum, segment) => sum + segment.durationSeconds, 0);
 
-  // 使用 genSvgKeys 分别生成 X 和 Y 的动画参数
+  // 使用 genSvgKeySplines 分别生成 X 和 Y 的动画参数
   const xTimeline: SvgTimelineSegment[] = timeline.map((segment, index) => ({
     keySplines: byDefault(segment.keySplines, '0.42 0 0.58 1'),
     toValue: coordinates[index + 1].x,
@@ -110,12 +110,12 @@ export function genAnimateTranslate(config: TranslateAnimationConfig) {
     durationSeconds: segment.durationSeconds,
   }));
 
-  const xKeys = genSvgKeys({
+  const xKeys = genSvgKeySplines({
     initValue: initX,
     timeline: xTimeline,
   });
 
-  const yKeys = genSvgKeys({
+  const yKeys = genSvgKeySplines({
     initValue: initY,
     timeline: yTimeline,
   });

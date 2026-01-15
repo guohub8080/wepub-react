@@ -1,6 +1,6 @@
 /**
  * genAnimateOpacity - 不透明度动画生成器
- * 基于 genSvgKeys 的设计理念，支持复杂的时间线配置
+ * 基于 genSvgKeySplines 的设计理念，支持复杂的时间线配置
  */
 
 // 导出类型

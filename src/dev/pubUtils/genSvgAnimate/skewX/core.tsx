@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { isUndefined } from 'lodash';
-import { genSvgKeys, SvgTimelineSegment } from '@pub-utils/svgKeySplines/genSvgKeys';
+import { genSvgKeySplines, SvgTimelineSegment } from '@pub-utils/genSvgKeySplines';
 import { SkewXAnimationConfig } from './types.ts';
 import byDefault from '@utils/common/byDefault';
 import { getEaseBezier } from '@pub-utils/getBezier';
@@ -66,14 +66,14 @@ export function genAnimateSkewX(config: SkewXAnimationConfig) {
   // 计算总时长
   const totalDuration = timeline.reduce((sum, segment) => sum + segment.durationSeconds, 0);
 
-  // 使用 genSvgKeys 生成动画参数
+  // 使用 genSvgKeySplines 生成动画参数
   const angleTimeline: SvgTimelineSegment[] = timeline.map((segment, index) => ({
     keySplines: byDefault(segment.keySplines, getEaseBezier({ isIn: true, isOut: true })),
     toValue: angles[index + 1],
     durationSeconds: segment.durationSeconds,
   }));
 
-  const angleKeys = genSvgKeys({
+  const angleKeys = genSvgKeySplines({
     initValue: initAngle,
     timeline: angleTimeline,
   });
